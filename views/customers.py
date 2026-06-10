@@ -1,0 +1,29 @@
+from controllers.collaborators import get_commercials
+from views.collaborators import display_collaborators
+
+def get_customers_data_from_form():
+    name = input("Veuillez saisir le nom complet du client : ")
+    email = input("Veuillez saisir l'adresse email du client : ")
+    phone = input("Veuillez saisir le n° de telephone du client : ")
+    company_name = input("Veuillez saisir le nom de l'entreprise du client : ")
+
+    commercials = get_commercials()
+    ids=[]
+    for c in commercials:
+        ids.append(str(c.id))
+    print(display_collaborators(commercials))
+    commercial_id = input("Veuillez saisir l'id du commercial à associé au client : ")
+    while commercial_id not in ids:
+        print(ids)
+        print(display_collaborators(commercials))
+        commercial_id = input("Veuillez saisir l'id d'un commercial valide à associé au client : ")
+
+    return name, email, phone, company_name, commercial_id
+
+
+
+
+def display_customers(customers):
+    for c in customers:
+        print(f"id : {c.id} - Nom : {c.name} - email : {c.email} - téléphone : {c.phone} - "
+              f"entreprise : {c.company_name} - id commercial : {c.commercial_id}")
