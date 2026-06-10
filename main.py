@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models import Base, Collaborateur, Client, Contrat, Evenement
+from models.models import Base, Collaborator, Customer, Contract, Event
 
 
 
