@@ -1,22 +1,22 @@
 import bcrypt
-from getpass import getpass
 
-from models.models import Collaborator
-from views.collaborators import get_collaborators_data_from_form
-from main import session
+from models.models import Collaborator, Role
+from views.collaborators import display_collaborator_form
+from database import session
 
 
 def create_collaborator():
-    name, email, password, phone, role = get_collaborators_data_from_form()
+    name, email, password, phone, role_id = display_collaborator_form()
     # hachage du mdp :
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
-    # penser au hachage / salage mdp
     collaborator = Collaborator(name=name,
                            email=email,
                            password=hashed_password.decode("utf-8"),
                            phone=phone,
-                           role=role)
+                           role_id=int(role_id))
+
+    # gestion d'erreur à gerer (adresse email unique etc)
     session.add(collaborator)
     session.commit()
 
@@ -27,15 +27,15 @@ def create_collaborator():
 
 
 def get_commercials():
-    commercials = session.query(Collaborator).filter(Collaborator.role == "commercial").all()
+    commercials = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "commercial").all()
     return commercials
 
 def get_supports():
-    supports = session.query(Collaborator).filter(Collaborator.role == "support").all()
+    supports = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "support").all()
     return supports
 
 def get_managers():
-    managers = session.query(Collaborator).filter(Collaborator.role == "gestion").all()
+    managers = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "gestion").all()
     return managers
 
 
@@ -58,5 +58,7 @@ def get_managers():
 
 
 if __name__ == '__main__':
-    # creer_collaborateur()
-    get_commercials()
+    create_collaborator()
+
+    # from views.collaborators import display_collaborators
+    # display_collaborators(get_commercials())

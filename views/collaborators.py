@@ -1,7 +1,7 @@
 from getpass import getpass
 
 
-def get_collaborators_data_from_form():
+def display_collaborator_form():
     # ajouter des controles (email + tel + securité mdp)
     name = input("Veuillez saisir le nom complet du collaborateur : ")
     email = input("Veuillez saisir l'adresse email du collaborateur : ")
@@ -16,11 +16,13 @@ def get_collaborators_data_from_form():
 
     phone = input("Veuillez saisir le n° de telephone du collaborateur : ")
 
-    role = input("Veuillez saisir le rôle du collaborateur (commercial/support/gestion) : ")
-    while role not in ["commercial", "support", "gestion"]:
-        role = input("Veuillez saisir un rôle valide (commercial/support/gestion) :")
+    role_id = input("Veuillez saisir le n° correspondant au rôle du collaborateur "
+                    "(1:commercial / 2:support / 3:gestion) : ")
+    while role_id not in ["1", "2", "3"]:
+        role_id = input("Veuillez saisir un n° valide correspondant au rôle du collaborateur "
+                    "(1:commercial / 2:support / 3:gestion) : ")
 
-    return name, email, password, phone, role
+    return name, email, password, phone, role_id
 
 
 

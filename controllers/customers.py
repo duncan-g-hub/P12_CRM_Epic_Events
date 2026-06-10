@@ -1,18 +1,19 @@
 from models.models import Customer
-from main import session
+from database import session
 
-from views.customers import get_customers_data_from_form
+from controllers.collaborators import get_commercials
+from views.customers import display_customer_form
 
 def create_customer():
-
-    name, email, phone, company_name, commercial_id = get_customers_data_from_form()
-
+    commercials = get_commercials()
+    name, email, phone, company_name, commercial_id = display_customer_form(commercials)
     customer = Customer(name=name,
                     email=email,
                     phone=phone,
                     company_name=company_name,
-                    commercial_id=commercial_id
+                    commercial_id=int(commercial_id)
                     )
+    #gestion d'erreur à gerer (adresse email unique etc)
     session.add(customer)
     session.commit()
 
@@ -25,6 +26,6 @@ def get_customers():
 
 
 if __name__ == "__main__":
-    # create_customer()
-    from views.customers import display_customers
-    display_customers(get_customers())
+    create_customer()
+    # from views.customers import display_customers
+    # display_customers(get_customers())
