@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Boolean, Enum
 from sqlalchemy.orm import DeclarativeBase, relationship
 from datetime import datetime
 
@@ -8,9 +8,6 @@ from datetime import datetime
 class Base(DeclarativeBase):
     pass
 
-
-# a voir pour gerer -> table role avec les 3 possiblités pour limiter la selection
-ROLES = ["commercial", "support", "gestion"]
 
 
 # table des collaborateurs
@@ -22,10 +19,12 @@ class Collaborateur(Base):
     email = Column(String(150), nullable=False, unique=True)
     mot_de_passe = Column(String(255), nullable=False)
     telephone = Column(String(20))
-    role = Column(String(20), nullable=False)  # "commercial", "support", "gestion"
+    role = Column(Enum("commercial", "support", "gestion", name="role"), nullable=False)
     date_creation = Column(DateTime, default=datetime.now)
 
-    clients = relationship("Client", back_populates="commercial")
+    clients = relationship("Client", back_populates="commercial", foreign_keys="Client.commercial_id")
+    contrats = relationship("Contrat", back_populates="commercial", foreign_keys="Contrat.commercial_id")
+    evenements_support = relationship("Evenement", back_populates="support", foreign_keys="Evenement.support_id")
 
 
 # table des clients
@@ -59,7 +58,7 @@ class Contrat(Base):
     signe = Column(Boolean)
 
     client = relationship("Client", back_populates="contrats")
-    commercial = relationship("Collaborateur", foreign_keys=[commercial_id])
+    commercial = relationship("Collaborateur", back_populates="contrats" ,foreign_keys="Contrat.commercial_id")
     evenement = relationship("Evenement", back_populates="contrat", uselist=False)
 
 
@@ -80,7 +79,7 @@ class Evenement(Base):
 
     contrat = relationship("Contrat", back_populates="evenement")
     client = relationship("Client", back_populates="evenements")
-    support = relationship("Collaborateur", foreign_keys=[support_id])
+    support = relationship("Collaborateur", back_populates="evenements_support", foreign_keys="Evenement.support_id")
 
 
 
