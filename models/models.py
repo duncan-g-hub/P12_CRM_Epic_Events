@@ -9,6 +9,14 @@ class Base(DeclarativeBase):
     pass
 
 
+# table des Roles
+class Role(Base):
+    __tablename__ = "role"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50), nullable=False, unique=True)  # "commercial", "support", "gestion"
+
+    collaborators = relationship("Collaborator", back_populates="role")
+
 
 # table des Collaborators
 class Collaborator(Base):
@@ -19,13 +27,13 @@ class Collaborator(Base):
     email = Column(String(150), nullable=False, unique=True)
     password = Column(String(255), nullable=False)
     phone = Column(String(20))
-    role = Column(Enum("commercial", "support", "gestion", name="role"), nullable=False)
+    role_id = Column(Integer, ForeignKey("role.id"), nullable=False)
     date_creation = Column(DateTime, default=datetime.now)
 
     customers = relationship("Customer", back_populates="commercial", foreign_keys="Customer.commercial_id")
     contracts = relationship("Contract", back_populates="commercial", foreign_keys="Contract.commercial_id")
     events_support = relationship("Event", back_populates="support", foreign_keys="Event.support_id")
-
+    role = relationship("Role", back_populates="collaborators")
 
 # table des Customers
 class Customer(Base):
