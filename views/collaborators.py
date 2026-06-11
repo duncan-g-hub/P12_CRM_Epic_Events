@@ -1,6 +1,3 @@
-from getpass import getpass
-
-
 def display_collaborator_form():
     # ajouter des controles (email + tel + securité mdp)
     name = input("Veuillez saisir le nom complet du collaborateur : ")
