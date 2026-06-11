@@ -6,12 +6,12 @@ def display_collaborator_form():
     name = input("Veuillez saisir le nom complet du collaborateur : ")
     email = input("Veuillez saisir l'adresse email du collaborateur : ")
 
-    password_1 = getpass("Veuillez saisir le mot de passe du collaborateur : ")
-    password_2 = getpass("Veuillez confirmer le mot de passe du collaborateur : ")
+    password_1 = input("Veuillez saisir le mot de passe du collaborateur : ")
+    password_2 = input("Veuillez confirmer le mot de passe du collaborateur : ")
     while password_1 != password_2:
         print("Les mots de passe ne correspondent pas")
-        password_1 = getpass("Veuillez saisir le mot de passe du collaborateur : ")
-        password_2 = getpass("Veuillez confirmer le mot de passe du collaborateur : ")
+        password_1 = input("Veuillez saisir le mot de passe du collaborateur : ")
+        password_2 = input("Veuillez confirmer le mot de passe du collaborateur : ")
     password = password_1
 
     phone = input("Veuillez saisir le n° de telephone du collaborateur : ")

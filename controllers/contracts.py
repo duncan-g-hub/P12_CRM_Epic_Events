@@ -24,3 +24,5 @@ def get_contracts():
     return contracts
 
 
+if __name__ == '__main__':
+    create_contract()

@@ -31,3 +31,8 @@ def create_event():
 def get_events():
     events = session.query(Event).all()
     return events
+
+
+
+if __name__ == '__main__':
+    create_event()
