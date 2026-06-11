@@ -33,9 +33,10 @@ def display_contract_form(commercials, customers):
 
 def display_contracts(contracts):
     for c in contracts:
+        print (c.signed)
         if c.signed:
-            c.signed = "Oui"
+            signed = "Oui"
         else:
-            c.signed = "Non"
+            signed = "Non"
         print(f"id : {c.id} - id commercial : {c.commercial_id} - id client : {c.customer_id} - "
-              f"montant total : {c.total_amount}€ - montant à payer : {c.amount_to_pay}€ - signé : {c.signed}")
+              f"montant total : {c.total_amount}€ - montant à payer : {c.amount_to_pay}€ - signé : {signed}")
