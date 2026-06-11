@@ -9,10 +9,10 @@ def create_contract():
     customers = get_customers()
     customer_id, commercial_id, total_amount, amount_to_pay, signed = display_contract_form(commercials, customers)
 
-    contract = Contract(customer_id=customer_id,
-                        commercial_id=commercial_id,
-                        total_amount=total_amount,
-                        amount_to_pay=amount_to_pay,
+    contract = Contract(customer_id=int(customer_id),
+                        commercial_id=int(commercial_id),
+                        total_amount=float(total_amount),
+                        amount_to_pay=float(amount_to_pay),
                         signed=signed
                         )
     session.add(contract)
