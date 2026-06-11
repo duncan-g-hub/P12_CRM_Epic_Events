@@ -13,7 +13,6 @@ def display_customer_form(commercials):
     display_collaborators(commercials)
     commercial_id = input("Veuillez saisir l'id du commercial à associé au client : ")
     while commercial_id not in ids:
-        print(ids)
         display_collaborators(commercials)
         commercial_id = input("Veuillez saisir l'id d'un commercial valide à associé au client : ")
 

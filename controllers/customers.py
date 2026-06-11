@@ -1,6 +1,5 @@
 from models.models import Customer
 from database import session
-
 from controllers.collaborators import get_commercials
 from views.customers import display_customer_form
 
@@ -19,8 +18,8 @@ def create_customer():
 
 
 def get_customers():
-    clients = session.query(Customer).all()
-    return clients
+    customers = session.query(Customer).all()
+    return customers
 
 
 
