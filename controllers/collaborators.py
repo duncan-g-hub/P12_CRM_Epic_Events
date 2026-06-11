@@ -41,22 +41,6 @@ def get_managers():
 
 
 
-
-
-
-
-# # controler le mdp :
-# import bcrypt
-#
-# mot_de_passe_saisi = "monMotDePasse123"
-# hashed_en_base = b'$2b$12$...'  # récupéré depuis la DB
-#
-# if bcrypt.checkpw(mot_de_passe_saisi.encode("utf-8"), hashed_en_base):
-#     print("Mot de passe correct")
-# else:
-#     print("Mot de passe incorrect")
-
-
 if __name__ == '__main__':
     create_collaborator()
 
