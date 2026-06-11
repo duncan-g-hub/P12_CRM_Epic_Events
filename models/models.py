@@ -20,7 +20,7 @@ class Role(Base):
 
 # table des Collaborators
 class Collaborator(Base):
-    __tablename__ = "Collaborator"
+    __tablename__ = "collaborator"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
@@ -37,16 +37,16 @@ class Collaborator(Base):
 
 # table des Customers
 class Customer(Base):
-    __tablename__ = "Customer"
+    __tablename__ = "customer"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     email = Column(String(150), nullable=False, unique=True)
-    telephone = Column(String(20))
+    phone = Column(String(20))
     company_name = Column(String(150))
     date_creation = Column(DateTime, default=datetime.now)
     date_last_contact = Column(DateTime, default=datetime.now)
-    commercial_id = Column(Integer, ForeignKey("Collaborator.id"))
+    commercial_id = Column(Integer, ForeignKey("collaborator.id"))
 
     commercial = relationship("Collaborator", back_populates="customers")
     contracts = relationship("Contract", back_populates="customer")
@@ -55,11 +55,11 @@ class Customer(Base):
 
 # table des Contracts
 class Contract(Base):
-    __tablename__ = "Contract"
+    __tablename__ = "contract"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    customer_id = Column(Integer, ForeignKey("Customer.id"))
-    commercial_id = Column(Integer, ForeignKey("Collaborator.id"))
+    customer_id = Column(Integer, ForeignKey("customer.id"))
+    commercial_id = Column(Integer, ForeignKey("collaborator.id"))
     total_amount = Column(Float)
     amount_to_pay = Column(Float)
     date_creation = Column(DateTime, default=datetime.now)
@@ -76,9 +76,9 @@ class Event(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
-    contract_id = Column(Integer, ForeignKey("Contract.id"))
-    customer_id = Column(Integer, ForeignKey("Customer.id"))
-    support_id = Column(Integer, ForeignKey("Collaborator.id"))
+    contract_id = Column(Integer, ForeignKey("contract.id"))
+    customer_id = Column(Integer, ForeignKey("customer.id"))
+    support_id = Column(Integer, ForeignKey("collaborator.id"))
     date_start = Column(DateTime)
     date_end = Column(DateTime)
     location = Column(String(150))
