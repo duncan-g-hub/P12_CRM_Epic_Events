@@ -62,7 +62,7 @@ class Contract(Base):
     commercial_id = Column(Integer, ForeignKey("Collaborator.id"))
     total_amount = Column(Float)
     amount_to_pay = Column(Float)
-    date_creation = Column(DateTime)
+    date_creation = Column(DateTime, default=datetime.now)
     signed = Column(Boolean)
 
     customer = relationship("Customer", back_populates="contracts")
