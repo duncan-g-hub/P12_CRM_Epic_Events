@@ -9,32 +9,34 @@ ALGORITHM = "HS256"
 TOKEN_EXPIRATION_HOURS = 8
 
 
-def login():
-    email = input("Saisir votre adresse email : ")
-
+def login(email: str, password: str) -> str | None:
     collaborator = session.query(Collaborator).filter(Collaborator.email == email).first()
-    # verif email
+
     if not collaborator:
-        print("Email introuvable.")
-        return None
+        raise ValueError("Email introuvable.")
 
-
-    password = input("Saisir votre mot de passe :")
-
-    # verif mdp
     if not bcrypt.checkpw(password.encode("utf-8"), collaborator.password.encode("utf-8")):
-        print("Mot de passe incorrect.")
-        return None
+        raise ValueError("Mot de passe incorrect.")
 
-    # Génération du token
-    payload = {
-        "collaborator_id": collaborator.id,
-        "role": collaborator.role.name,
-        "expiration": int(time.time()) + (TOKEN_EXPIRATION_HOURS * 3600)
-    }
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-    print(f"Connecté en tant que {collaborator.name} ({collaborator.role.name})")
-    return token
+    token = jwt.encode(
+        {
+            "collaborator_id": collaborator.id,
+            "role": collaborator.role.name,
+            "exp": int(time.time()) + (TOKEN_EXPIRATION_HOURS * 3600)
+        },
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+    return token, collaborator
+
+
+def decode_token(token: str) -> dict:
+    try:
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        raise PermissionError("Token expiré.")
+    except jwt.InvalidTokenError:
+        raise PermissionError("Token invalide.")
 
 
 if __name__ == "__main__":
