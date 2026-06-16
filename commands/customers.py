@@ -33,14 +33,14 @@ def create(ctx, name, email, phone, company_name, commercial_id):
 
 
 
-customers, customer_id = get_customers()
+customers, customer_ids = get_customers()
 @customers_group.command("display")
 @click.option(
-    "--customers-id",
+    "--customer-id",
     prompt= f"\nListe de des clients :\n{customers}\n\nN° id du client à afficher",
-    type=click.Choice(customer_id),
+    type=click.Choice(customer_ids),
 )
 @click.pass_context
-def display(ctx, customers_id):
+def display(ctx, customer_id):
     token = ctx.obj["token"]
-    display_customer(token, customers_id)
+    display_customer(token, customer_id)
