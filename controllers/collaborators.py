@@ -38,11 +38,17 @@ def get_commercials():
 
 def get_supports():
     supports = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "support").all()
-    return supports
+    liste = "\n".join(
+        f" id : {s.id} - Nom : {s.name} - email : {s.email} - téléphone : {s.phone}" for s in supports)
+    valid_ids = [str(s.id) for s in supports]
+    return liste, valid_ids
 
 def get_managers():
     managers = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "gestion").all()
-    return managers
+    liste = "\n".join(
+        f" id : {m.id} - Nom : {m.name} - email : {m.email} - téléphone : {m.phone}" for m in managers)
+    valid_ids = [str(m.id) for m in managers]
+    return liste, valid_ids
 
 
 
