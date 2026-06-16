@@ -27,10 +27,13 @@ def get_customers():
     valid_ids = [str(c.id) for c in customers]
     return liste, valid_ids
 
+def get_customer_name(customer_id):
+    customer_name = session.query(Customer.name).filter(Customer.id == customer_id).scalar()
+    return customer_name
 
 
 
 if __name__ == "__main__":
-    create_customer()
+    get_customer_name(1)
     # from views.customers import display_customers
     # display_customers(get_customers())
