@@ -1,5 +1,5 @@
 import click
-from controllers.collaborators import create_collaborator
+from controllers.collaborators import create_collaborator, get_collaborators, display_collaborator
 
 @click.group("collaborators")
 def collaborators_group():
@@ -35,3 +35,17 @@ def create(ctx, name, email, password, confirm, phone, role_id):
         click.echo(click.style(f"Collaborateur '{collaborator.name}' créé.", fg="green"))
     except PermissionError as e:
         click.echo(click.style(f"{e}", fg="red"))
+
+
+
+collaborators, collaborator_ids = get_collaborators()
+@collaborators_group.command("display")
+@click.option(
+    "--collaborator-id",
+    prompt= f"\nListe de des collaborateurs :\n{collaborators}\n\nN° id du collaborateur à afficher",
+    type=click.Choice(collaborator_ids),
+)
+@click.pass_context
+def display(ctx, collaborator_id):
+    token = ctx.obj["token"]
+    display_collaborator(token, collaborator_id)
