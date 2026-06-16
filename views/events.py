@@ -50,8 +50,9 @@ def display_event_form(supports, customers, contracts):
 
 
 
-def display_events(events):
-    for e in events:
-        print(f"id : {e.id} - nom : {e.name} - id support : {e.support_id} - id client : {e.customer_id} - "
-              f"id contrat : {e.contract_id} - date de début : {e.date_start}€ - date de fin : {e.date_end} - "
-              f"adresse : {e.location} - nombre participants : {e.attendees} - commentaire : {e.notes}")
+def view_display_event(e):
+        print("----------------------------------\n"
+              f"Événement : \nid : {e.id} - nom : {e.name} \nid support : {e.support_id} - id client : {e.customer_id} - "
+              f"id contrat : {e.contract_id} \ndate de début : {e.date_start} - date de fin : {e.date_end} \n"
+              f"adresse : {e.location} - nombre participants : {e.attendees} \ncommentaire : {e.notes}"
+              "\n----------------------------------")

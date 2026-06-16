@@ -1,6 +1,6 @@
 import click
 
-from controllers.events import create_event
+from controllers.events import create_event, get_events, display_event
 from controllers.contracts import get_contracts
 from controllers.customers import get_customers
 from controllers.collaborators import get_supports
@@ -38,8 +38,6 @@ supports, support_ids = get_supports()
 @click.option("--location",  prompt="Adresse")
 @click.option("--attendees",  prompt="Nombre de participants", type=int)
 @click.option("--notes", prompt="Commentaires")
-
-
 @click.pass_context
 def create(ctx, name, contract_id, customer_id, support_id, date_start, date_end, location, attendees, notes):
     """Créer un événement"""
@@ -51,3 +49,17 @@ def create(ctx, name, contract_id, customer_id, support_id, date_start, date_end
 
     except PermissionError as e:
         click.echo(click.style(f"{e}", fg="red"))
+
+
+
+events, event_ids = get_events()
+@events_group.command("display")
+@click.option(
+    "--event-id",
+    prompt= f"\nListe des événements :\n{events}\n\nN° id de l'événnement",
+    type=click.Choice(event_ids),
+)
+@click.pass_context
+def display(ctx, event_id):
+    token = ctx.obj["token"]
+    display_event(token, event_id)

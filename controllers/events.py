@@ -1,6 +1,7 @@
 from models.models import Event
 from database import session
 from permissions import require_role
+from views.events import view_display_event
 
 @require_role("gestion")
 def create_event(token, name, contract_id, customer_id, support_id, date_start, date_end, location, attendees, notes):
@@ -23,7 +24,8 @@ def create_event(token, name, contract_id, customer_id, support_id, date_start, 
     return event
 
 
-def get_events():
+@require_role("gestion", "commercial", "support")
+def get_events(token):
     events = session.query(Event).all()
     liste = "\n".join(
         f" id : {e.id} - nom : {e.name} - date de départ : {e.date_start}"
@@ -32,6 +34,18 @@ def get_events():
     return liste, valid_ids
 
 
+@require_role("gestion", "commercial", "support")
+def display_event(token, event_id):
+    event = session.query(Event).get(event_id)
+    view_display_event(event)
+
+
+
+# @require_role("gestion", "support")
+# def update_event(token, event_id):
+#     pass
+
+
 
 if __name__ == '__main__':
-    create_event()
+    display_event(3)
