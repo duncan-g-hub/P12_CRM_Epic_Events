@@ -1,18 +1,9 @@
 from models.models import Event
-from views.events import display_event_form
 from database import session
-from controllers.collaborators import get_supports
-from controllers.customers import get_customers
-from controllers.contracts import get_contracts
+from permissions import require_role
 
-def create_event():
-    supports = get_supports()
-    customers = get_customers()
-    contracts = get_contracts()
-    name, contract_id, customer_id, support_id, date_start, date_end, location, attendees, notes = (
-        display_event_form(supports, customers, contracts))
-
-
+@require_role("gestion")
+def create_event(token, name, contract_id, customer_id, support_id, date_start, date_end, location, attendees, notes):
 
     event = Event(name=name,
                   contract_id=int(contract_id),
@@ -24,13 +15,21 @@ def create_event():
                   attendees=int(attendees),
                   notes=notes
                  )
+
+    # Gerer les formats et gestion erreur sur les dates
+
     session.add(event)
     session.commit()
+    return event
 
 
 def get_events():
     events = session.query(Event).all()
-    return events
+    liste = "\n".join(
+        f" id : {e.id} - nom : {e.name} - date de départ : {e.date_start}"
+        f" - date de fin : {e.date_end} - adresse : {e.location}" for e in events)
+    valid_ids = [str(e.id) for e in events]
+    return liste, valid_ids
 
 
 
