@@ -1,6 +1,7 @@
 from models.models import Customer
 from database import session
 from permissions import require_role
+from views.customers import view_display_customer
 
 @require_role("commercial")
 def create_customer(token, name, email, phone, company_name, commercial_id):
@@ -19,6 +20,7 @@ def create_customer(token, name, email, phone, company_name, commercial_id):
     return customer
 
 
+@require_role("gestion", "commercial", "support")
 def get_customers():
     customers = session.query(Customer).all()
     liste = "\n".join(
@@ -26,13 +28,20 @@ def get_customers():
     valid_ids = [str(c.id) for c in customers]
     return liste, valid_ids
 
+
+@require_role("gestion", "commercial", "support")
 def get_customer_name(customer_id):
     customer_name = session.query(Customer.name).filter(Customer.id == customer_id).scalar()
     return customer_name
 
 
+@require_role("gestion", "commercial", "support")
+def display_customer(token, customer_id):
+    customer = session.query(Customer).get(customer_id)
+    view_display_customer(customer)
+
 
 if __name__ == "__main__":
-    get_customer_name(1)
+    display_customer(1)
     # from views.customers import display_customers
     # display_customers(get_customers())
