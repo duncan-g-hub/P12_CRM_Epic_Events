@@ -23,8 +23,8 @@ def get_contracts():
     return liste, valid_ids
 
 
-# @require_role("gestion", "commercial", "support")
-def display_contract( contract_id):
+@require_role("gestion", "commercial", "support")
+def display_contract(token, contract_id):
     contract = session.query(Contract).get(contract_id)
     view_display_contract(contract)
 
