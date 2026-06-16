@@ -1,14 +1,12 @@
 import bcrypt
 
 from models.models import Collaborator, Role
-from views.collaborators import display_collaborator_form
 from database import session
-
 from permissions import require_role
 
 @require_role("gestion")
 def create_collaborator(token, name, email, password, phone, role_id):
-    # name, email, password, phone, role_id = display_collaborator_form()
+
     # hachage du mdp :
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 

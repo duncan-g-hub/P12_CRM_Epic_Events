@@ -10,7 +10,6 @@ def customers_group():
 
 liste, valid_ids = get_commercials()
 
-
 @customers_group.command("create")
 @click.option("--name",     prompt="Nom complet")
 @click.option("--email",    prompt="Adresse email")
