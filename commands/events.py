@@ -56,7 +56,7 @@ events, event_ids = get_events()
 @events_group.command("display")
 @click.option(
     "--event-id",
-    prompt= f"\nListe des événements :\n{events}\n\nN° id de l'événnement",
+    prompt= f"\nListe des événements :\n{events}\n\nN° id de l'événnement à afficher",
     type=click.Choice(event_ids),
 )
 @click.pass_context
