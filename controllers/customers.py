@@ -1,7 +1,7 @@
 from models.models import Customer
 from database import session
 from permissions import require_role
-from views.views.views import view_display_customer
+from views.views import view_display_customer
 
 @require_role("commercial")
 def create_customer(token, name, email, phone, company_name, commercial_id):
