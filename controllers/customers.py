@@ -22,8 +22,8 @@ def create_customer(token, name, email, phone, company_name, commercial_id):
 
 def get_customers():
     customers = session.query(Customer).all()
-    liste = "\n".join(
-        f" id : {c.id} - Nom : {c.name} - email : {c.email} - téléphone : {c.phone}" for c in customers)
+    liste = "\n\n".join(
+        f" id : {c.id} - Nom : {c.name} \nemail : {c.email} - téléphone : {c.phone}" for c in customers)
     valid_ids = [str(c.id) for c in customers]
     return liste, valid_ids
 

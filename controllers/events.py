@@ -25,9 +25,9 @@ def create_event(token, name, contract_id, customer_id, support_id, date_start, 
 
 def get_events():
     events = session.query(Event).all()
-    liste = "\n".join(
-        f" id : {e.id} - nom : {e.name} - date de départ : {e.date_start}"
-        f" - date de fin : {e.date_end} - adresse : {e.location}" for e in events)
+    liste = "\n\n".join(
+        f" id : {e.id} - nom : {e.name} \ndate de départ : {e.date_start}"
+        f" - date de fin : {e.date_end} \nadresse : {e.location}" for e in events)
     valid_ids = [str(e.id) for e in events]
     return liste, valid_ids
 

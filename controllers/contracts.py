@@ -17,7 +17,7 @@ def create_contract(token, customer_id, commercial_id, total_amount, amount_to_p
 
 def get_contracts():
     contracts = session.query(Contract).all()
-    liste = "\n".join(
+    liste = "\n\n".join(
         f" id : {c.id} - id client : {c.customer_id} - id commercial : {c.commercial_id}" for c in contracts)
     valid_ids = [str(c.id) for c in contracts]
     return liste, valid_ids
