@@ -1,6 +1,6 @@
 import click
 
-from controllers.contracts import create_contract
+from controllers.contracts import create_contract, get_contracts, display_contract
 from controllers.customers import get_customers, get_customer_name
 from controllers.collaborators import get_commercials
 
@@ -41,3 +41,16 @@ def create(ctx, customer_id, commercial_id, total_amount, amount_to_pay, signed)
 
     except PermissionError as e:
         click.echo(click.style(f"{e}", fg="red"))
+
+
+contracts, contract_ids = get_contracts()
+@contracts_group.command("display")
+@click.option(
+    "--contract-id",
+    prompt= f"\nListe de des contrats :\n{contracts}\n\nN° id du contrat à afficher",
+    type=click.Choice(contract_ids),
+)
+@click.pass_context
+def display(ctx, contract_id):
+    token = ctx.obj["token"]
+    display_contract(token, contract_id)

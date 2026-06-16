@@ -1,6 +1,6 @@
 from models.models import Contract
 from database import session
-
+from views.contracts import view_display_contract
 from permissions import require_role
 
 @require_role("gestion")
@@ -23,5 +23,12 @@ def get_contracts():
     return liste, valid_ids
 
 
+# @require_role("gestion", "commercial", "support")
+def display_contract( contract_id):
+    contract = session.query(Contract).get(contract_id)
+    view_display_contract(contract)
+
+
+
 if __name__ == '__main__':
-    create_contract()
+    display_contract(1)
