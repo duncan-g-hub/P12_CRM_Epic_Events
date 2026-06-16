@@ -25,7 +25,7 @@ def create(ctx, name, email, password, confirm, phone, role_id):
 
     # Vérification confirmation mot de passe
     while password != confirm:
-        click.echo(click.style("✗ Les mots de passe ne correspondent pas.", fg="red"))
+        click.echo(click.style("Les mots de passe ne correspondent pas.", fg="red"))
         password = click.prompt("Mot de passe",           hide_input=True)
         confirm  = click.prompt("Confirmer mot de passe", hide_input=True)
 
@@ -42,7 +42,7 @@ collaborators, collaborator_ids = get_collaborators()
 @collaborators_group.command("display")
 @click.option(
     "--collaborator-id",
-    prompt= f"\nListe de des collaborateurs :\n{collaborators}\n\nN° id du collaborateur à afficher",
+    prompt= f"\nListe des collaborateurs :\n\n{collaborators}\n\nN° id du collaborateur à afficher",
     type=click.Choice(collaborator_ids),
 )
 @click.pass_context

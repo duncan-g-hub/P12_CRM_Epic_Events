@@ -1,7 +1,7 @@
 from models.models import Event
 from database import session
 from permissions import require_role
-from views.events import view_display_event
+from views.views import view_display_event
 
 @require_role("gestion")
 def create_event(token, name, contract_id, customer_id, support_id, date_start, date_end, location, attendees, notes):
@@ -26,8 +26,9 @@ def create_event(token, name, contract_id, customer_id, support_id, date_start, 
 def get_events():
     events = session.query(Event).all()
     liste = "\n\n".join(
-        f" id : {e.id} - nom : {e.name} \ndate de départ : {e.date_start}"
-        f" - date de fin : {e.date_end} \nadresse : {e.location}" for e in events)
+        f" id : {e.id} - nom : {e.name} "
+        f"\n date de départ : {e.date_start} - date de fin : {e.date_end} "
+        f"\n adresse : {e.location}" for e in events)
     valid_ids = [str(e.id) for e in events]
     return liste, valid_ids
 
