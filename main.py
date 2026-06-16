@@ -6,6 +6,7 @@ from models.models import Base, Role, Collaborator, Customer, Contract, Event
 from commands.auth import login_command, logout_command
 from commands.collaborators import collaborators_group
 from commands.customers import customers_group
+from commands.contracts import contracts_group
 from token_storage import load_token
 
 
@@ -35,6 +36,7 @@ cli.add_command(login_command)
 cli.add_command(logout_command)
 cli.add_command(collaborators_group)
 cli.add_command(customers_group)
+cli.add_command(contracts_group)
 
 if __name__ == "__main__":
     cli()
