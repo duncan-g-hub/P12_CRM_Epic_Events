@@ -20,7 +20,6 @@ def create_customer(token, name, email, phone, company_name, commercial_id):
     return customer
 
 
-@require_role("gestion", "commercial", "support")
 def get_customers():
     customers = session.query(Customer).all()
     liste = "\n".join(
@@ -29,7 +28,6 @@ def get_customers():
     return liste, valid_ids
 
 
-@require_role("gestion", "commercial", "support")
 def get_customer_name(customer_id):
     customer_name = session.query(Customer.name).filter(Customer.id == customer_id).scalar()
     return customer_name

@@ -18,14 +18,12 @@ def create_event(token, name, contract_id, customer_id, support_id, date_start, 
                  )
 
     # Gerer les formats et gestion erreur sur les dates
-
     session.add(event)
     session.commit()
     return event
 
 
-@require_role("gestion", "commercial", "support")
-def get_events(token):
+def get_events():
     events = session.query(Event).all()
     liste = "\n".join(
         f" id : {e.id} - nom : {e.name} - date de départ : {e.date_start}"
