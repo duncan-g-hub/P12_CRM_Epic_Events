@@ -4,11 +4,13 @@ from token_storage import save_token, delete_token
 
 
 @click.command("login")
-@click.option("--email",    prompt="Email",           help="Adresse email")
-@click.option("--password", prompt="Mot de passe",    hide_input=True, help="Mot de passe")
 @click.pass_context
-def login_command(ctx, email, password):
+def login_command(ctx):
     """Se connecter au CRM"""
+
+    email = click.prompt("Adresse email")
+    password = click.prompt("Mot de passe", hide_input=True)
+
     try:
         token, collaborator = login(email, password)
         save_token(token)

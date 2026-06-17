@@ -11,26 +11,26 @@ def contracts_group():
     pass
 
 
-customers, customer_ids = get_customers()
-commercials, commercial_ids = get_commercials()
+
+
 @contracts_group.command("create")
-@click.option(
-    "--customer-id",
-    prompt= f"\nClients disponibles :\n{customers}\n\nN° id du client",
-    type=click.Choice(customer_ids),
-)
-@click.option(
-    "--commercial-id",
-    prompt= f"\nCommerciaux disponibles :\n{commercials}\n\nN° id du commercial",
-    type=click.Choice(commercial_ids),
-)
-@click.option("--total-amount", prompt="Montant total", type=float)
-@click.option("--ammount-to-pay",  prompt="Reste à payer", type=float)
-@click.option("--signed",  prompt="Contrat signé ?", type=click.BOOL)
 @click.pass_context
-def create(ctx, customer_id, commercial_id, total_amount, amount_to_pay, signed):
+def create(ctx):
     """Créer un contrat"""
     token = ctx.obj["token"]
+
+    customers, customer_ids = get_customers()
+    customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\nN° id du client",
+        type=click.Choice(customer_ids))
+
+    commercials, commercial_ids = get_commercials()
+    commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\nN° id du commercial",
+        type=click.Choice(commercial_ids))
+
+    total_amount = click.prompt("Montant total", type=float)
+    amount_to_pay = click.prompt("Reste à payer", type=float)
+    signed = click.prompt("Contrat signé ?", type=click.BOOL)
+
     try:
         contract = create_contract(token, customer_id, commercial_id, total_amount, amount_to_pay, signed)
         customer_name = get_customer_name(contract.customer_id)

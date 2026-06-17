@@ -9,19 +9,17 @@ def collaborators_group():
 
 
 @collaborators_group.command("create")
-@click.option("--name",     prompt="Nom complet")
-@click.option("--email",    prompt="Adresse email")
-@click.option("--password", prompt="Mot de passe",          hide_input=True)
-@click.option("--confirm",  prompt="Confirmer mot de passe", hide_input=True)
-@click.option("--phone",    prompt="Numéro de téléphone")
-@click.option(
-    "--role-id",
-    prompt="Rôle (1:commercial / 2:support / 3:gestion)",
-    type=click.Choice(["1", "2", "3"]),
-)
 @click.pass_context
-def create(ctx, name, email, password, confirm, phone, role_id):
+def create(ctx,):
     """Créer un collaborateur (gestion uniquement)"""
+
+    name = click.prompt("Nom complet du collaborateur")
+    email = click.prompt("Adresse email")
+    password = click.prompt("Mot de passe", hide_input=True)
+    confirm = click.prompt("Confirmer mot de passe", hide_input=True)
+    phone = click.prompt("Numéro de téléphone")
+    role_id = click.prompt("Rôle (1:commercial / 2:support / 3:gestion)",
+                           type=click.Choice(["1", "2", "3"]))
 
     # Vérification confirmation mot de passe
     while password != confirm:

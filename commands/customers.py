@@ -8,23 +8,24 @@ def customers_group():
     pass
 
 
-commercials, commercial_ids = get_commercials()
+
 
 @customers_group.command("create")
-@click.option("--name",     prompt="Nom complet")
-@click.option("--email",    prompt="Adresse email")
-@click.option("--phone",    prompt="Numéro de téléphone")
-@click.option("--company-name",    prompt="Nom de l'entreprise")
-@click.option(
-    "--commercial-id",
-    prompt= f"\nCommerciaux disponibles :\n{commercials}\n\nN° id du commercial",
-    type=click.Choice(commercial_ids),
-)
 @click.pass_context
-def create(ctx, name, email, phone, company_name, commercial_id):
+def create(ctx):
     """Créer un client"""
 
     token = ctx.obj["token"]
+
+    name = click.prompt("Nom complet du client")
+    email = click.prompt("Adresse email")
+    phone = click.prompt("Numéro de téléphone")
+    company_name = click.prompt("Nom de l'entreprise")
+
+    commercials, commercial_ids = get_commercials()
+    commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\nN° id du commercial",
+                  type=click.Choice(commercial_ids))
+
     try:
         customer = create_customer(token, name, email, phone, company_name, commercial_id)
         click.echo(click.style(f"Client '{customer.name}' créé.", fg="green"))
