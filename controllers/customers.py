@@ -1,8 +1,8 @@
 from models.models import Customer
 from database import session
-from permissions import require_role
+from auth.permissions import require_role
 from views.views import view_display_customer
-from auth import decode_token
+from auth.auth import decode_token
 
 @require_role("commercial")
 def create_customer(token, name, email, phone, company_name, commercial_id):
@@ -41,6 +41,16 @@ def update_customer(token, customer_id, name, email, phone, company_name, commer
         customer.phone = phone
     if company_name:
         customer.company_name = company_name
+    if commercial_id:
+        customer.commercial_id = commercial_id
+
+    session.commit()
+    return customer
+
+
+@require_role("gestion")
+def update_customer_commercial(token, customer_id, commercial_id):
+    customer = session.query(Customer).filter(Customer.id == customer_id).first()
     if commercial_id:
         customer.commercial_id = commercial_id
 
