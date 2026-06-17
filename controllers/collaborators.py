@@ -11,6 +11,9 @@ def create_collaborator(token, name, email, password, phone, role_id):
     # hachage du mdp :
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
+    existing = session.query(Collaborator).filter(Collaborator.email == email).first()
+    if existing:
+        raise ValueError(f"L'email '{email}' est déjà utilisé.")
     collaborator = Collaborator(name=name,
                            email=email,
                            password=hashed_password.decode("utf-8"),
@@ -22,6 +25,38 @@ def create_collaborator(token, name, email, password, phone, role_id):
     session.commit()
     return collaborator
 
+
+@require_role("gestion")
+def update_collaborator(token, collaborator_id, name, email, password, phone, role_id):
+    collaborator = session.query(Collaborator).filter(Collaborator.id == collaborator_id).first()
+
+    if name :
+        collaborator.name = name
+    if email :
+        existing = session.query(Collaborator).filter(
+            Collaborator.email == email,
+            Collaborator.id != collaborator_id
+        ).first()
+        if existing:
+            raise ValueError(f"L'email '{email}' est déjà utilisé.")
+        collaborator.email = email
+    if password :
+        # hachage du mdp :
+        hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        collaborator.password = hashed_password.decode("utf-8")
+    if phone :
+        collaborator.phone = phone
+    if role_id :
+        collaborator.role_id = int(role_id)
+
+    session.commit()
+    return collaborator
+
+
+@require_role("gestion", "commercial", "support")
+def display_collaborator(token, collaborator_id):
+    collaborator = session.query(Collaborator).get(collaborator_id)
+    view_display_collaborator(collaborator, get_collaborator_role(collaborator.role_id))
 
 
 def get_collaborator_name(collaborator_id):
@@ -61,13 +96,6 @@ def get_collaborators():
         f" id : {c.id} - Nom : {c.name}" for c in collaborators)
     valid_ids = [str(c.id) for c in collaborators]
     return liste, valid_ids
-
-
-
-@require_role("gestion", "commercial", "support")
-def display_collaborator(token, collaborator_id):
-    collaborator = session.query(Collaborator).get(collaborator_id)
-    view_display_collaborator(collaborator, get_collaborator_role(collaborator.role_id))
 
 
 if __name__ == '__main__':
