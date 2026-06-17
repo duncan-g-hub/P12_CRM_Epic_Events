@@ -1,7 +1,8 @@
-from models.models import Contract
+from models.models import Contract, Customer
 from database import session
 from views.views import view_display_contract
 from permissions import require_role
+from auth import decode_token
 
 @require_role("gestion")
 def create_contract(token, customer_id, commercial_id, total_amount, amount_to_pay, signed):
@@ -15,6 +16,44 @@ def create_contract(token, customer_id, commercial_id, total_amount, amount_to_p
     session.commit()
     return contract
 
+
+@require_role("gestion", "commercial")
+def update_contract(token, contract_id, customer_id, commercial_id, total_amount, amount_to_pay, signed):
+
+    # Récupération du rôle et id collab depuis le token
+    payload = decode_token(token)
+    collaborator_role = payload.get("role")
+    collaborator_id = payload.get("id")
+
+    contract = session.query(Contract).filter(Contract.id == contract_id).first()
+
+    # Vérification si commercial : doit être rattaché au client du contrat
+    if collaborator_role == "commercial":
+        customer = session.query(Customer).filter(Customer.id == contract.customer_id).first()
+        if customer.commercial_id != collaborator_id:
+            raise PermissionError("Vous ne pouvez modifier que les contrats de vos propres clients.")
+
+    if customer_id :
+        contract.customer_id = customer_id
+    if commercial_id :
+        contract.commercial_id = int(commercial_id)
+    if total_amount :
+        contract.total_amount = float(total_amount)
+    if amount_to_pay :
+        contract.amount_to_pay = float(amount_to_pay)
+    if signed is not None :
+        contract.signed = signed
+
+    session.commit()
+    return contract
+
+
+@require_role("gestion", "commercial", "support")
+def display_contract(token, contract_id):
+    contract = session.query(Contract).get(contract_id)
+    view_display_contract(contract)
+
+
 def get_contracts():
     contracts = session.query(Contract).all()
     liste = "\n".join(
@@ -23,10 +62,7 @@ def get_contracts():
     return liste, valid_ids
 
 
-@require_role("gestion", "commercial", "support")
-def display_contract(token, contract_id):
-    contract = session.query(Contract).get(contract_id)
-    view_display_contract(contract)
+
 
 
 
