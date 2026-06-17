@@ -11,8 +11,6 @@ def contracts_group():
     pass
 
 
-
-
 @contracts_group.command("create")
 @click.pass_context
 def create(ctx):
@@ -20,12 +18,12 @@ def create(ctx):
     token = ctx.obj["token"]
 
     customers, customer_ids = get_customers()
-    customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\nN° id du client",
-        type=click.Choice(customer_ids))
+    customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\n"
+                               "N° id du client", type=click.Choice(customer_ids))
 
     commercials, commercial_ids = get_commercials()
-    commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\nN° id du commercial",
-        type=click.Choice(commercial_ids))
+    commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\n"
+                                 "N° id du commercial", type=click.Choice(commercial_ids))
 
     total_amount = click.prompt("Montant total", type=float)
     amount_to_pay = click.prompt("Reste à payer", type=float)
@@ -47,20 +45,18 @@ def update(ctx):
 
     contracts, contract_ids = get_contracts()
     contract_id = click.prompt(
-        f"\nListe des contrats :\n\n{contracts}\n\nN° id du contrat à modifier",
-        type=click.Choice(contract_ids))
+        f"\nListe des contrats :\n{contracts}\n\n"
+        "N° id du contrat à modifier", type=click.Choice(contract_ids))
 
     customers, customer_ids = get_customers()
     customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\n"
-                               f"N° id du nouveau client (Entrée pour ignorer)",
-                               default="", show_default=False, type=click.Choice(customer_ids)
-                               ) or None
+                               "N° id du nouveau client (Entrée pour ignorer)",
+                               default="", show_default=False, type=click.Choice(customer_ids)) or None
 
     commercials, commercial_ids = get_commercials()
     commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\n"
-                                 f"N° id du nouveau commercial (Entrée pour ignorer)",
-                                 default="", show_default=False, type=click.Choice(commercial_ids)
-                                 ) or None
+                                 "N° id du nouveau commercial (Entrée pour ignorer)",
+                                 default="", show_default=False, type=click.Choice(commercial_ids)) or None
 
     total_amount = click.prompt("Nouveau montant total (Entrée pour ignorer)",
                                 type=float, default="", show_default=False) or None
@@ -82,6 +78,6 @@ def update(ctx):
 def display(ctx):
     token = ctx.obj["token"]
     contracts, contract_ids = get_contracts()
-    contract_id = click.prompt(f"\nListe de des contrats :\n{contracts}\n\nN° id du contrat à afficher",
-        type=click.Choice(contract_ids))
+    contract_id = click.prompt(f"\nListe de des contrats :\n{contracts}\n\n"
+                               "N° id du contrat à afficher", type=click.Choice(contract_ids))
     display_contract(token, contract_id)

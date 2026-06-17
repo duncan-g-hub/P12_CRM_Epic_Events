@@ -2,7 +2,7 @@ import bcrypt
 
 from models.models import Collaborator, Role
 from database import session
-from permissions import require_role
+from auth.permissions import require_role
 from views.views import view_display_collaborator
 
 @require_role("gestion")

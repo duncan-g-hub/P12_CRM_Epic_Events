@@ -7,7 +7,6 @@ def collaborators_group():
     pass
 
 
-
 @collaborators_group.command("create")
 @click.pass_context
 def create(ctx,):
@@ -36,20 +35,6 @@ def create(ctx,):
         click.echo(click.style(f"{e}", fg="red"))
 
 
-
-
-@collaborators_group.command("display")
-@click.pass_context
-def display(ctx):
-    token = ctx.obj["token"]
-    collaborators, collaborator_ids = get_collaborators()
-    collaborator_id = click.prompt(
-        "\nListe des collaborateurs :\n\n{collaborators}\n\nN° id du collaborateur à afficher",
-        type=click.Choice(collaborator_ids))
-    display_collaborator(token, collaborator_id)
-
-
-
 @collaborators_group.command("update")
 @click.pass_context
 def update(ctx):
@@ -57,7 +42,7 @@ def update(ctx):
 
     collaborators, collaborator_ids = get_collaborators()
     collaborator_id = click.prompt(
-        f"\nListe des collaborateurs :\n\n{collaborators}\n\nN° id du collaborateur à modifier",
+        f"\nListe des collaborateurs :\n{collaborators}\n\nN° id du collaborateur à modifier",
         type=click.Choice(collaborator_ids))
 
     name = click.prompt("Nouveau nom (Entrée pour ignorer)", default="", show_default=False).strip() or None
@@ -71,7 +56,8 @@ def update(ctx):
             password = click.prompt("Nouveau mot de passe", hide_input=True)
             confirm = click.prompt("Confirmer mot de passe", hide_input=True)
 
-    phone = click.prompt("Nouveau téléphone (Entrée pour ignorer)", default="", show_default=False).strip() or None
+    phone = click.prompt("Nouveau téléphone (Entrée pour ignorer)",
+                         default="", show_default=False).strip() or None
 
     role_id = click.prompt(
         "Nouveau rôle (1/2/3) (Entrée pour ignorer)",
@@ -84,3 +70,13 @@ def update(ctx):
         click.echo(click.style(f"Collaborateur '{collaborator.name}' mis à jour.", fg="green"))
     except PermissionError as e:
         click.echo(click.style(str(e), fg="red"))
+
+
+@collaborators_group.command("display")
+@click.pass_context
+def display(ctx):
+    token = ctx.obj["token"]
+    collaborators, collaborator_ids = get_collaborators()
+    collaborator_id = click.prompt(f"\nListe des collaborateurs :\n{collaborators}\n\n"
+                                   "N° id du collaborateur à afficher", type=click.Choice(collaborator_ids))
+    display_collaborator(token, collaborator_id)

@@ -1,8 +1,8 @@
 from models.models import Contract, Customer
 from database import session
 from views.views import view_display_contract
-from permissions import require_role
-from auth import decode_token
+from auth.permissions import require_role
+from auth.auth import decode_token
 
 @require_role("gestion")
 def create_contract(token, customer_id, commercial_id, total_amount, amount_to_pay, signed):
