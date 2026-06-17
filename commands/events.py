@@ -1,9 +1,9 @@
 import click
 
-from controllers.events import create_event, get_events, display_event
+from controllers.events import create_event, get_events, display_event, update_event, update_event_support
 from controllers.contracts import get_contracts
-from controllers.customers import get_customers
 from controllers.collaborators import get_supports
+from auth.auth import decode_token
 
 
 @click.group("events")
@@ -21,16 +21,12 @@ def create(ctx):
     name = click.prompt("Nom de l'événement")
 
     contracts, contract_ids = get_contracts()
-    contract_id = click.prompt(f"\nContrats disponibles :\n{contracts}\n\nN° id du contrat",
-        type=click.Choice(contract_ids))
-
-    customers, customer_ids = get_customers()
-    customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\nN° id du client",
-        type=click.Choice(customer_ids))
+    contract_id = click.prompt(f"\nContrats disponibles :\n{contracts}\n\n"
+                               "N° id du contrat", type=click.Choice(contract_ids))
 
     supports, support_ids = get_supports()
-    support_id = click.prompt(f"\nSupports disponibles :\n{supports}\n\nN° id du support",
-        type=click.Choice(support_ids))
+    support_id = click.prompt(f"\nSupports disponibles :\n{supports}\n\n"
+                              "N° id du support", type=click.Choice(support_ids))
 
     date_start = click.prompt("Date de départ (JJ/MM/AAAA)", type=click.DateTime(formats=["%d/%m/%Y"]))
     date_end = click.prompt("Date de fin (JJ/MM/AAAA)", type=click.DateTime(formats=["%d/%m/%Y"]))
@@ -39,7 +35,7 @@ def create(ctx):
     notes = click.prompt("Commentaires")
 
     try:
-        event = create_event(token, name, contract_id, customer_id, support_id, date_start, date_end, location, attendees, notes)
+        event = create_event(token, name, contract_id, support_id, date_start, date_end, location, attendees, notes)
 
         click.echo(click.style(f"Événement {event.name} créé.", fg="green"))
 
@@ -47,12 +43,62 @@ def create(ctx):
         click.echo(click.style(f"{e}", fg="red"))
 
 
+@events_group.command("update")
+@click.pass_context
+def update(ctx):
+    token = ctx.obj["token"]
+    payload = decode_token(token)
+    collaborator_role = payload.get("role")
+
+    events, event_ids = get_events()
+    event_id = click.prompt(f"\nListe des événements :\n{events}\n\n"
+                            "N° id de l'événement à modifier", type=click.Choice(event_ids))
+
+    if collaborator_role == "support":
+        name = click.prompt("Nom de l'événement (Entrée pour ignorer)", default="", show_default=False
+                            ).strip() or None
+
+        contracts, contract_ids = get_contracts()
+        contract_id = click.prompt(f"\nListe des contrts :\n{contracts}\n\n"
+                                   "N° id du contrat", default="", show_default=False,
+                                   type=click.Choice(contract_ids)) or None
+
+        date_start = click.prompt("Date de départ (JJ/MM/AAAA) (Entrée pour ignorer)",
+                                  type=click.DateTime(formats=["%d/%m/%Y"]), default=None, show_default=False) or None
+        date_end = click.prompt("Date de fin (JJ/MM/AAAA) (Entrée pour ignorer)",
+                                type=click.DateTime(formats=["%d/%m/%Y"]), default=None, show_default=False) or None
+
+        location = click.prompt("Adresse (Entrée pour ignorer)", default="", show_default=False).strip() or None
+
+        attendees = click.prompt("Nombre de participants (Entrée pour ignorer)",
+                                 type=int, default=None, show_default=False) or None
+
+        notes = click.prompt("Commentaires (Entrée pour ignorer)", default="", show_default=False).strip() or None
+
+        try :
+            event = update_event(token, event_id, name, contract_id, date_start, date_end, location, attendees, notes)
+            click.echo(click.style(f"Événement '{event.name}' mis à jour.", fg="green"))
+        except PermissionError as e:
+            click.echo(click.style(f"{e}", fg="red"))
+
+
+    if collaborator_role == "gestion":
+        supports, support_ids = get_supports()
+        support_id = click.prompt(f"\nListe des supports :\n{supports}\n\n"
+                                  "N° id du nouveau support (Entrée pour ignorer)",
+                                  default="", show_default=False, type=click.Choice(support_ids)) or None
+        try:
+            event = update_event_support(token, event_id, support_id)
+            click.echo(click.style(f"Événement '{event.name}' mis à jour.", fg="green"))
+        except PermissionError as e:
+            click.echo(click.style(f"{e}", fg="red"))
+
 
 @events_group.command("display")
 @click.pass_context
 def display(ctx):
     token = ctx.obj["token"]
     events, event_ids = get_events()
-    event_id = click.prompt(f"\nListe des événements :\n{events}\n\nN° id de l'événnement à afficher",
-                            type=click.Choice(event_ids))
+    event_id = click.prompt(f"\nListe des événements :\n{events}\n\n"
+                            "N° id de l'événnement à afficher", type=click.Choice(event_ids))
     display_event(token, event_id)

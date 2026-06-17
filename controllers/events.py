@@ -1,14 +1,27 @@
-from models.models import Event
+from models.models import Event, Customer, Contract
 from database import session
-from permissions import require_role
+from auth.permissions import require_role
 from views.views import view_display_event
+from auth.auth import decode_token
 
-@require_role("gestion")
-def create_event(token, name, contract_id, customer_id, support_id, date_start, date_end, location, attendees, notes):
+@require_role("commercial")
+def create_event(token, name, contract_id, support_id, date_start, date_end, location, attendees, notes):
+    payload = decode_token(token)
+    collaborator_id = payload.get("id")
 
+    contract = session.query(Contract).filter(Contract.id == contract_id).first()
+    customer = session.query(Customer).filter(Customer.id == contract.customer_id).first()
+    # uniquement pour les clients dont ils sont responsables
+    if customer.commercial_id != collaborator_id:
+        raise PermissionError("Vous ne pouvez créer un évennement que pour les clients dont vous êtes responsable.")
+
+    if not contract.signed :
+        raise PermissionError("Vous ne pouvez pas créer un évennement sans que le contrat ne soit signé")
+
+    # le client est forcément le client relié au contrat
     event = Event(name=name,
                   contract_id=int(contract_id),
-                  customer_id=int(customer_id),
+                  customer_id=int(contract.customer_id),
                   support_id=int(support_id),
                   date_start=date_start,
                   date_end=date_end,
@@ -23,6 +36,51 @@ def create_event(token, name, contract_id, customer_id, support_id, date_start, 
     return event
 
 
+@require_role("support")
+def update_event(token, event_id, name, contract_id, date_start, date_end, location, attendees, notes):
+    # Récupération de l'id collab depuis le token
+    payload = decode_token(token)
+    collaborator_id = payload.get("id")
+
+    event = session.query(Event).filter(Event.id == event_id).first()
+
+    # uniquement les events dont ils sont responsables
+    if event.support_id != collaborator_id:
+        raise PermissionError("Vous ne pouvez modifier que les événements dont vous êtes responsable.")
+
+    if name :
+        event.name = name
+    if contract_id :
+        event.contract_id = int(contract_id)
+    if date_start :
+        event.date_start = date_start
+    if date_end :
+        event.date_end = date_end
+    if location :
+        event.location = location
+    if attendees is not None :
+        event.attendees = int(attendees)
+    if notes :
+        event.notes = notes
+    session.commit()
+    return event
+
+
+@require_role("gestion")
+def update_event_support(token, event_id, support_id):
+    event = session.query(Event).filter(Event.id == event_id).first()
+    if support_id :
+        event.support_id = int(support_id)
+    session.commit()
+    return event
+
+
+@require_role("gestion", "commercial", "support")
+def display_event(token, event_id):
+    event = session.query(Event).get(event_id)
+    view_display_event(event)
+
+
 def get_events():
     events = session.query(Event).all()
     liste = "\n\n".join(
@@ -32,17 +90,6 @@ def get_events():
     valid_ids = [str(e.id) for e in events]
     return liste, valid_ids
 
-
-@require_role("gestion", "commercial", "support")
-def display_event(token, event_id):
-    event = session.query(Event).get(event_id)
-    view_display_event(event)
-
-
-
-# @require_role("gestion", "support")
-# def update_event(token, event_id):
-#     pass
 
 
 
