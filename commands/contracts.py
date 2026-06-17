@@ -13,7 +13,6 @@ def contracts_group():
 
 customers, customer_ids = get_customers()
 commercials, commercial_ids = get_commercials()
-
 @contracts_group.command("create")
 @click.option(
     "--customer-id",
@@ -28,8 +27,6 @@ commercials, commercial_ids = get_commercials()
 @click.option("--total-amount", prompt="Montant total", type=float)
 @click.option("--ammount-to-pay",  prompt="Reste à payer", type=float)
 @click.option("--signed",  prompt="Contrat signé ?", type=click.BOOL)
-
-
 @click.pass_context
 def create(ctx, customer_id, commercial_id, total_amount, amount_to_pay, signed):
     """Créer un contrat"""
@@ -43,14 +40,12 @@ def create(ctx, customer_id, commercial_id, total_amount, amount_to_pay, signed)
         click.echo(click.style(f"{e}", fg="red"))
 
 
-contracts, contract_ids = get_contracts()
+
 @contracts_group.command("display")
-@click.option(
-    "--contract-id",
-    prompt= f"\nListe de des contrats :\n{contracts}\n\nN° id du contrat à afficher",
-    type=click.Choice(contract_ids),
-)
 @click.pass_context
-def display(ctx, contract_id):
+def display(ctx):
     token = ctx.obj["token"]
+    contracts, contract_ids = get_contracts()
+    contract_id = click.prompt(f"\nListe de des contrats :\n{contracts}\n\nN° id du contrat à afficher",
+        type=click.Choice(contract_ids))
     display_contract(token, contract_id)

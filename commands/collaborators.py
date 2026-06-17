@@ -38,14 +38,13 @@ def create(ctx, name, email, password, confirm, phone, role_id):
 
 
 
-collaborators, collaborator_ids = get_collaborators()
+
 @collaborators_group.command("display")
-@click.option(
-    "--collaborator-id",
-    prompt= f"\nListe des collaborateurs :\n\n{collaborators}\n\nN° id du collaborateur à afficher",
-    type=click.Choice(collaborator_ids),
-)
 @click.pass_context
-def display(ctx, collaborator_id):
+def display(ctx):
     token = ctx.obj["token"]
+    collaborators, collaborator_ids = get_collaborators()
+    collaborator_id = click.prompt(
+        "\nListe des collaborateurs :\n\n{collaborators}\n\nN° id du collaborateur à afficher",
+        type=click.Choice(collaborator_ids))
     display_collaborator(token, collaborator_id)

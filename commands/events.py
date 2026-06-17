@@ -52,14 +52,11 @@ def create(ctx, name, contract_id, customer_id, support_id, date_start, date_end
 
 
 
-events, event_ids = get_events()
 @events_group.command("display")
-@click.option(
-    "--event-id",
-    prompt= f"\nListe des événements :\n{events}\n\nN° id de l'événnement à afficher",
-    type=click.Choice(event_ids),
-)
 @click.pass_context
-def display(ctx, event_id):
+def display(ctx):
     token = ctx.obj["token"]
+    events, event_ids = get_events()
+    event_id = click.prompt(f"\nListe des événements :\n{events}\n\nN° id de l'événnement à afficher",
+                            type=click.Choice(event_ids))
     display_event(token, event_id)
