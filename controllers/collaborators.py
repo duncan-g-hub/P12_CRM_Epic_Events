@@ -63,6 +63,11 @@ def get_collaborator_role(collaborator_role_id):
     return collaborator_role
 
 
+def get_collaborator_name(collaborator_id):
+    collaborator_name = session.query(Collaborator.name).filter(Collaborator.id == collaborator_id).scalar()
+    return collaborator_name
+
+
 def get_commercials():
     commercials = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "commercial").all()
     liste = "\n".join(

@@ -3,7 +3,8 @@ from database import session
 from views.views import view_display_contract
 from auth.permissions import require_role
 from auth.auth import decode_token
-
+from controllers.collaborators import get_collaborator_name
+from controllers.customers import get_customer_name
 
 @require_role("gestion")
 def create_contract(token, customer_id, commercial_id, total_amount, amount_to_pay, signed):
@@ -64,6 +65,8 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
     contracts = query.all()
 
     liste = "\n".join(
-        f" id : {c.id} - id client : {c.customer_id} - id commercial : {c.commercial_id}" for c in contracts)
+        f" id : {c.id} "
+        f"\n id client : {c.customer_id} - nom : {get_customer_name(c.customer_id)}"
+        f"\n id commercial : {c.commercial_id} - nom : {get_collaborator_name(c.commercial_id)}" for c in contracts)
     valid_ids = [str(c.id) for c in contracts]
     return liste, valid_ids
