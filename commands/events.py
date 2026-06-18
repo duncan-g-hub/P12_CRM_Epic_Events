@@ -95,7 +95,6 @@ def update(ctx):
 def display(ctx):
     token = ctx.obj["token"]
 
-    click.echo("Affichage des détails d'un événement:\n")
     support_id = None
     filter_by_support = False
     filter_by_empty_support = False
@@ -104,6 +103,7 @@ def display(ctx):
     collaborator_role = payload.get("role")
     collaborator_id = payload.get("id")
 
+    click.echo("Affichage des détails d'un événement:\n")
     if collaborator_role == "gestion":
         filter_by_empty_support = click.prompt(
             "Voulez-vous ajouter le filtre pour afficher les événements sans supports associés ? "
