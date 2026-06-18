@@ -1,10 +1,14 @@
 import jwt
 import bcrypt
 import time
+import os
+from dotenv import load_dotenv
+
 from models.models import Collaborator
 from database import session
 
-SECRET_KEY = "secret"  # à mettre dans une variable d'environnement
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 TOKEN_EXPIRATION_HOURS = 8
 

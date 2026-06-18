@@ -1,7 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
 
-engine = create_engine("mysql+mysqlconnector://admin:admin@localhost/epic_events_CRM",
-                       echo=True)
+load_dotenv()
+
+engine = create_engine(os.getenv("DB_URL"), echo=True)
+
 Session = sessionmaker(bind=engine)
 session = Session()
