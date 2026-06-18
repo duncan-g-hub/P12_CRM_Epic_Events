@@ -54,13 +54,8 @@ def update_collaborator(token, collaborator_id, name, email, password, phone, ro
 
 @require_role("gestion", "commercial", "support")
 def display_collaborator(token, collaborator_id):
-    collaborator = session.query(Collaborator).get(collaborator_id)
+    collaborator = session.get(Collaborator, collaborator_id)
     view_display_collaborator(collaborator, get_collaborator_role(collaborator.role_id))
-
-
-def get_collaborator_name(collaborator_id):
-    collaborator_name = session.query(Collaborator.name).filter(Collaborator.id == collaborator_id).scalar()
-    return collaborator_name
 
 
 def get_collaborator_role(collaborator_role_id):
@@ -84,12 +79,12 @@ def get_supports():
     return liste, valid_ids
 
 
-def get_managers():
-    managers = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "gestion").all()
-    liste = "\n".join(
-        f" id : {m.id} - Nom : {m.name}" for m in managers)
-    valid_ids = [str(m.id) for m in managers]
-    return liste, valid_ids
+# def get_managers():
+#     managers = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "gestion").all()
+#     liste = "\n".join(
+#         f" id : {m.id} - Nom : {m.name}" for m in managers)
+#     valid_ids = [str(m.id) for m in managers]
+#     return liste, valid_ids
 
 
 def get_collaborators():

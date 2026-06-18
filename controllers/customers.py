@@ -54,7 +54,7 @@ def update_customer_commercial(token, customer_id, commercial_id):
 
 @require_role("gestion", "commercial", "support")
 def display_customer(token, customer_id):
-    customer = session.query(Customer).get(customer_id)
+    customer = session.get(Customer, customer_id)
     view_display_customer(customer)
 
 

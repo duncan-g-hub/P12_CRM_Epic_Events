@@ -74,7 +74,7 @@ def update_event_support(token, event_id, support_id):
 
 @require_role("gestion", "commercial", "support")
 def display_event(token, event_id):
-    event = session.query(Event).get(event_id)
+    event = session.get(Event, event_id)
     view_display_event(event)
 
 
@@ -84,7 +84,7 @@ def get_events(support_id=None, filter_by_support=False, filter_by_empty_support
     if filter_by_support and support_id:
         query = query.filter(Event.support_id == support_id)
     if filter_by_empty_support:
-        query = query.filter(Event.support_id == None)
+        query = query.filter(Event.support_id.is_(None))
 
     events = query.all()
 

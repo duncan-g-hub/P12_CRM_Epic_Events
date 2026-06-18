@@ -32,7 +32,7 @@ def update_contract(token, contract_id, customer_id, commercial_id, total_amount
             raise PermissionError("Vous ne pouvez modifier que les contrats de vos propres clients.")
 
     if customer_id:
-        contract.customer_id = customer_id
+        contract.customer_id = int(customer_id)
     if commercial_id:
         contract.commercial_id = int(commercial_id)
     if total_amount is not None:
@@ -48,7 +48,7 @@ def update_contract(token, contract_id, customer_id, commercial_id, total_amount
 
 @require_role("gestion", "commercial", "support")
 def display_contract(token, contract_id):
-    contract = session.query(Contract).get(contract_id)
+    contract = session.get(Contract, contract_id)
     view_display_contract(contract)
 
 
