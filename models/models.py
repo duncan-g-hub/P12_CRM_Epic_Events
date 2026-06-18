@@ -1,8 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Boolean, Enum
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Boolean
 from sqlalchemy.orm import DeclarativeBase, relationship
 from datetime import datetime
-
-
 
 
 class Base(DeclarativeBase):
@@ -35,6 +33,7 @@ class Collaborator(Base):
     events_support = relationship("Event", back_populates="support", foreign_keys="Event.support_id")
     role = relationship("Role", back_populates="collaborators")
 
+
 # table des Customers
 class Customer(Base):
     __tablename__ = "customer"
@@ -66,7 +65,8 @@ class Contract(Base):
     signed = Column(Boolean)
 
     customer = relationship("Customer", back_populates="contracts")
-    commercial = relationship("Collaborator", back_populates="contracts" ,foreign_keys="Contract.commercial_id")
+    commercial = relationship("Collaborator", back_populates="contracts",
+                              foreign_keys="Contract.commercial_id")
     event = relationship("Event", back_populates="contract", uselist=False)
 
 
@@ -88,9 +88,3 @@ class Event(Base):
     contract = relationship("Contract", back_populates="event")
     customer = relationship("Customer", back_populates="events")
     support = relationship("Collaborator", back_populates="events_support", foreign_keys="Event.support_id")
-
-
-
-
-
-

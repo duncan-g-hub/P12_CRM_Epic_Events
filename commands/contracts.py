@@ -79,8 +79,7 @@ def update(ctx):
 def display(ctx):
     token = ctx.obj["token"]
 
-
-    commercial_id = False
+    commercial_id = None
     filter_by_commercial = False
     filter_by_amount_to_pay = False
     filter_by_signed = False
@@ -88,7 +87,7 @@ def display(ctx):
     payload = decode_token(token)
     collaborator_role = payload.get("role")
     collaborator_id = payload.get("id")
-    # si l'utilisateur est un commercial on affiche les filtres
+
     if collaborator_role == "commercial":
         filter_by_commercial = click.prompt(
             "Voulez-vous ajouter le filtre pour afficher les contrats qui vous sont attribués ? (Entrée pour ignorer)",
@@ -104,7 +103,8 @@ def display(ctx):
             "Voulez-vous ajouter le filtre pour afficher les contrats non signés ? (Entrée pour ignorer)",
             type=click.BOOL, default="", show_default=False)
 
-    contracts, contract_ids = get_contracts(commercial_id, filter_by_commercial, filter_by_amount_to_pay, filter_by_signed)
+    contracts, contract_ids = get_contracts(commercial_id, filter_by_commercial, filter_by_amount_to_pay,
+                                            filter_by_signed)
 
     contract_id = click.prompt(f"\nListe des contrats :\n{contracts}\n\n"
                                "N° id du contrat à afficher", type=click.Choice(contract_ids))

@@ -1,6 +1,5 @@
 import click
 
-
 from database import engine, session
 from models.models import Base, Role, Collaborator, Customer, Contract, Event
 from commands.auth import login_command, logout_command
@@ -9,7 +8,6 @@ from commands.customers import customers_group
 from commands.contracts import contracts_group
 from commands.events import events_group
 from token_storage import load_token
-
 
 # Créer les tables
 # Base.metadata.drop_all(engine)   # supprime toutes les tables
@@ -25,13 +23,13 @@ if not session.query(Role).first():
     session.commit()
 
 
-
 @click.group()
 @click.pass_context
 def cli(ctx):
     """Epic Events CRM"""
     ctx.ensure_object(dict)
     ctx.obj["token"] = load_token()
+
 
 cli.add_command(login_command)
 cli.add_command(logout_command)

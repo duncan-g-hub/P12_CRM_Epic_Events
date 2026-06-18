@@ -1,7 +1,9 @@
 import click
-from controllers.customers import create_customer, display_customer, get_customers, update_customer, update_customer_commercial
+from controllers.customers import create_customer, display_customer, get_customers, update_customer, \
+    update_customer_commercial
 from controllers.collaborators import get_commercials
 from auth.auth import decode_token
+
 
 @click.group("customers")
 def customers_group():
@@ -23,7 +25,7 @@ def create(ctx):
 
     commercials, commercial_ids = get_commercials()
     commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\nN° id du commercial",
-                  type=click.Choice(commercial_ids))
+                                 type=click.Choice(commercial_ids))
 
     try:
         customer = create_customer(token, name, email, phone, company_name, commercial_id)
@@ -52,7 +54,7 @@ def update(ctx):
         phone = click.prompt("Numéro de téléphone (Entrée pour ignorer)", default="", show_default=False
                              ).strip() or None
         company_name = click.prompt("Nom de l'entreprise (Entrée pour ignorer)", default="", show_default=False
-                             ).strip() or None
+                                    ).strip() or None
         try:
             customer = update_customer(token, customer_id, name, email, phone, company_name)
             click.echo(click.style(f"Client '{customer.name}' mis à jour.", fg="green"))

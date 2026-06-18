@@ -22,6 +22,7 @@ def login_command(ctx):
         click.echo(click.style(f"✗ {e}", fg="red"))
         raise click.Abort()
 
+
 @click.command("logout")
 def logout_command():
     delete_token()

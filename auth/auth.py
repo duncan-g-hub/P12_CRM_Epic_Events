@@ -20,7 +20,7 @@ def login(email: str, password: str) -> str | None:
 
     token = jwt.encode(
         {
-            "collaborator_id": collaborator.id,
+            "id": collaborator.id,
             "role": collaborator.role.name,
             "exp": int(time.time()) + (TOKEN_EXPIRATION_HOURS * 3600)
         },
@@ -37,7 +37,3 @@ def decode_token(token: str) -> dict:
         raise PermissionError("Token expiré.")
     except jwt.InvalidTokenError:
         raise PermissionError("Token invalide.")
-
-
-if __name__ == "__main__":
-    login()

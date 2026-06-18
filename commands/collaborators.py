@@ -1,6 +1,7 @@
 import click
 from controllers.collaborators import create_collaborator, get_collaborators, display_collaborator, update_collaborator
 
+
 @click.group("collaborators")
 def collaborators_group():
     """Gestion des collaborateurs"""
@@ -9,7 +10,7 @@ def collaborators_group():
 
 @collaborators_group.command("create")
 @click.pass_context
-def create(ctx,):
+def create(ctx, ):
     """Créer un collaborateur (gestion uniquement)"""
     token = ctx.obj["token"]
 

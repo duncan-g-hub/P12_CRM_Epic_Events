@@ -71,12 +71,11 @@ def update(ctx):
 
         notes = click.prompt("Commentaires (Entrée pour ignorer)", default="", show_default=False).strip() or None
 
-        try :
+        try:
             event = update_event(token, event_id, name, contract_id, date_start, date_end, location, attendees, notes)
             click.echo(click.style(f"Événement '{event.name}' mis à jour.", fg="green"))
         except PermissionError as e:
             click.echo(click.style(f"{e}", fg="red"))
-
 
     if collaborator_role == "gestion":
         supports, support_ids = get_supports()
@@ -95,7 +94,7 @@ def update(ctx):
 def display(ctx):
     token = ctx.obj["token"]
 
-    support_id = False
+    support_id = None
     filter_by_support = False
     filter_by_empty_support = False
 
@@ -103,20 +102,17 @@ def display(ctx):
     collaborator_role = payload.get("role")
     collaborator_id = payload.get("id")
 
-    # gestion ajout de filtres (pas de support associé : gestion)
     if collaborator_role == "gestion":
         filter_by_empty_support = click.prompt(
-            "Voulez-vous ajouter le filtre pour afficher les événements sans supports associés ? (Entrée pour ignorer)",
-            type=click.BOOL, default="", show_default=False)
+            "Voulez-vous ajouter le filtre pour afficher les événements sans supports associés ? "
+            "(Entrée pour ignorer)", type=click.BOOL, default="", show_default=False)
 
-    # gestion ajout de filtres (du support connecté)
     if collaborator_role == "support":
         filter_by_support = click.prompt(
-            "Voulez-vous ajouter le filtre pour afficher les événements qui vous sont attribués ? (Entrée pour ignorer)",
-            type=click.BOOL, default="", show_default=False)
+            "Voulez-vous ajouter le filtre pour afficher les événements qui vous sont attribués ? "
+            "(Entrée pour ignorer)", type=click.BOOL, default="", show_default=False)
         if filter_by_support:
             support_id = collaborator_id
-
 
     events, event_ids = get_events(support_id, filter_by_support, filter_by_empty_support)
 

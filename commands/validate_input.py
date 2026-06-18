@@ -1,6 +1,7 @@
 from datetime import datetime
 import re
 
+
 def validate_date(prompt: str) -> datetime:
     format = "%d/%m/%Y"
     while True:
@@ -11,10 +12,10 @@ def validate_date(prompt: str) -> datetime:
             print(f"Format invalide, veuillez saisir une date au format JJ/MM/AAAA")
 
 
-
 def validate_phone(phone):
     if not re.match(r"^\+?[\d\s\-]{10,15}$", phone):
         raise ValueError("Format invalide (ex: 0612345678)")
+
 
 def validate_password(password):
     if len(password) < 8:
