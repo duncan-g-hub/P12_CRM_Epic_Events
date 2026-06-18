@@ -77,7 +77,34 @@ def update(ctx):
 @click.pass_context
 def display(ctx):
     token = ctx.obj["token"]
-    contracts, contract_ids = get_contracts()
-    contract_id = click.prompt(f"\nListe de des contrats :\n{contracts}\n\n"
+
+    commercial_id = False
+    filter_by_commercial_id = False
+    filter_by_amount_to_pay = False
+    filter_by_signed = False
+
+    filter_on = click.prompt("Voulez-vous filtrer l'affichage des contrats ? (Entrée pour ignorer)",
+                          type=click.BOOL, default="", show_default=False)
+    if filter_on:
+
+        filter_by_commercial_id = click.prompt(
+            "Voulez-vous ajouter le filtre pour afficher les contrats d'un commercial ? (Entrée pour ignorer)",
+            type=click.BOOL, default="", show_default=False)
+        if filter_by_commercial_id:
+            commercials, commercial_ids = get_commercials()
+            commercial_id = int(click.prompt(f"\nDe quel commercial voulez vous afficher les contrats :\n{commercials}\n\n"
+                                     "N° id du commercial", type=click.Choice(commercial_ids)))
+
+        filter_by_amount_to_pay = click.prompt(
+            "Voulez-vous ajouter le filtre pour afficher les contrats pas entièrement payés ? (Entrée pour ignorer)",
+            type=click.BOOL, default="", show_default=False)
+
+        filter_by_signed = click.prompt(
+            "Voulez-vous ajouter le filtre pour afficher les contrats non signés ? (Entrée pour ignorer)",
+            type=click.BOOL, default="", show_default=False)
+
+    contracts, contract_ids = get_contracts(commercial_id, filter_by_commercial_id, filter_by_amount_to_pay, filter_by_signed)
+
+    contract_id = click.prompt(f"\nListe des contrats :\n{contracts}\n\n"
                                "N° id du contrat à afficher", type=click.Choice(contract_ids))
     display_contract(token, contract_id)

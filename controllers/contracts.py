@@ -54,8 +54,16 @@ def display_contract(token, contract_id):
     view_display_contract(contract)
 
 
-def get_contracts():
-    contracts = session.query(Contract).all()
+def get_contracts(commercial_id=False, filter_by_commercial_id=False, filter_by_amount_to_pay=False, filter_by_signed=False):
+    query = session.query(Contract)
+    if filter_by_commercial_id and commercial_id:
+        query = query.filter(Contract.commercial_id == commercial_id)
+    if filter_by_amount_to_pay:
+        query = query.filter(Contract.amount_to_pay > 0)
+    if filter_by_signed:
+        query = query.filter(Contract.signed == False)
+    contracts = query.all()
+
     liste = "\n".join(
         f" id : {c.id} - id client : {c.customer_id} - id commercial : {c.commercial_id}" for c in contracts)
     valid_ids = [str(c.id) for c in contracts]
