@@ -54,9 +54,9 @@ def display_contract(token, contract_id):
     view_display_contract(contract)
 
 
-def get_contracts(commercial_id=False, filter_by_commercial_id=False, filter_by_amount_to_pay=False, filter_by_signed=False):
+def get_contracts(commercial_id=False, filter_by_commercial=False, filter_by_amount_to_pay=False, filter_by_signed=False):
     query = session.query(Contract)
-    if filter_by_commercial_id and commercial_id:
+    if filter_by_commercial and commercial_id:
         query = query.filter(Contract.commercial_id == commercial_id)
     if filter_by_amount_to_pay:
         query = query.filter(Contract.amount_to_pay > 0)
