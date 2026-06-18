@@ -17,7 +17,7 @@ def contracts_group():
 def create(ctx):
     """Créer un contrat"""
     token = ctx.obj["token"]
-
+    click.echo("Création d'un contrat:\n")
     customers, customer_ids = get_customers()
     customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\n"
                                "N° id du client", type=click.Choice(customer_ids))
@@ -43,7 +43,7 @@ def create(ctx):
 @click.pass_context
 def update(ctx):
     token = ctx.obj["token"]
-
+    click.echo("Modification d'un contrat:\n")
     contracts, contract_ids = get_contracts()
     contract_id = click.prompt(
         f"\nListe des contrats :\n{contracts}\n\n"
@@ -78,7 +78,7 @@ def update(ctx):
 @click.pass_context
 def display(ctx):
     token = ctx.obj["token"]
-
+    click.echo("Affichage des détails d'un contrat:\n")
     commercial_id = None
     filter_by_commercial = False
     filter_by_amount_to_pay = False

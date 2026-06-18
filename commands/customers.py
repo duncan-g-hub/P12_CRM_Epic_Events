@@ -17,7 +17,7 @@ def create(ctx):
     """Créer un client"""
 
     token = ctx.obj["token"]
-
+    click.echo("Création d'un client:\n")
     name = click.prompt("Nom complet du client")
     email = click.prompt("Adresse email")
     phone = click.prompt("Numéro de téléphone")
@@ -41,7 +41,7 @@ def update(ctx):
     token = ctx.obj["token"]
     payload = decode_token(token)
     collaborator_role = payload.get("role")
-
+    click.echo("Modification d'un client:\n")
     customers, customer_ids = get_customers()
     customer_id = click.prompt(f"\nListe des Clients :\n{customers}\n\n"
                                "N° id du client à modifier", type=click.Choice(customer_ids))
@@ -77,6 +77,7 @@ def update(ctx):
 @click.pass_context
 def display(ctx):
     token = ctx.obj["token"]
+    click.echo("Affichage des détails d'un client:\n")
     customers, customer_ids = get_customers()
     customer_id = click.prompt(f"\nListe de des clients :\n{customers}\n\n"
                                "N° id du client à afficher", type=click.Choice(customer_ids))

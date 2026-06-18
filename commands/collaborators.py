@@ -13,7 +13,7 @@ def collaborators_group():
 def create(ctx, ):
     """Créer un collaborateur (gestion uniquement)"""
     token = ctx.obj["token"]
-
+    click.echo("Création d'un collaborateur:\n")
     name = click.prompt("Nom complet du collaborateur")
     email = click.prompt("Adresse email")
 
@@ -40,7 +40,7 @@ def create(ctx, ):
 @click.pass_context
 def update(ctx):
     token = ctx.obj["token"]
-
+    click.echo("Modification d'un collaborateur:\n")
     collaborators, collaborator_ids = get_collaborators()
     collaborator_id = click.prompt(
         f"\nListe des collaborateurs :\n{collaborators}\n\nN° id du collaborateur à modifier",
@@ -77,6 +77,7 @@ def update(ctx):
 @click.pass_context
 def display(ctx):
     token = ctx.obj["token"]
+    click.echo("Affichage des détails d'un collaborateur:\n")
     collaborators, collaborator_ids = get_collaborators()
     collaborator_id = click.prompt(f"\nListe des collaborateurs :\n{collaborators}\n\n"
                                    "N° id du collaborateur à afficher", type=click.Choice(collaborator_ids))

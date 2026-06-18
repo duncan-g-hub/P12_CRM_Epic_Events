@@ -18,6 +18,7 @@ def create(ctx):
     """Créer un événement"""
     token = ctx.obj["token"]
 
+    click.echo("Création d'un événement:\n")
     name = click.prompt("Nom de l'événement")
 
     contracts, contract_ids = get_contracts()
@@ -45,7 +46,7 @@ def update(ctx):
     token = ctx.obj["token"]
     payload = decode_token(token)
     collaborator_role = payload.get("role")
-
+    click.echo("Modification d'un événement:\n")
     events, event_ids = get_events()
     event_id = click.prompt(f"\nListe des événements :\n{events}\n\n"
                             "N° id de l'événement à modifier", type=click.Choice(event_ids))
@@ -94,6 +95,7 @@ def update(ctx):
 def display(ctx):
     token = ctx.obj["token"]
 
+    click.echo("Affichage des détails d'un événement:\n")
     support_id = None
     filter_by_support = False
     filter_by_empty_support = False
