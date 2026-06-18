@@ -24,10 +24,6 @@ def create(ctx):
     contract_id = click.prompt(f"\nContrats disponibles :\n{contracts}\n\n"
                                "N° id du contrat", type=click.Choice(contract_ids))
 
-    supports, support_ids = get_supports()
-    support_id = click.prompt(f"\nSupports disponibles :\n{supports}\n\n"
-                              "N° id du support", type=click.Choice(support_ids))
-
     date_start = click.prompt("Date de départ (JJ/MM/AAAA)", type=click.DateTime(formats=["%d/%m/%Y"]))
     date_end = click.prompt("Date de fin (JJ/MM/AAAA)", type=click.DateTime(formats=["%d/%m/%Y"]))
     location = click.prompt("Adresse")
@@ -35,7 +31,7 @@ def create(ctx):
     notes = click.prompt("Commentaires")
 
     try:
-        event = create_event(token, name, contract_id, support_id, date_start, date_end, location, attendees, notes)
+        event = create_event(token, name, contract_id, date_start, date_end, location, attendees, notes)
 
         click.echo(click.style(f"Événement {event.name} créé.", fg="green"))
 
@@ -85,7 +81,7 @@ def update(ctx):
     if collaborator_role == "gestion":
         supports, support_ids = get_supports()
         support_id = click.prompt(f"\nListe des supports :\n{supports}\n\n"
-                                  "N° id du nouveau support (Entrée pour ignorer)",
+                                  "N° id du support à associer à l'événement (Entrée pour ignorer)",
                                   default="", show_default=False, type=click.Choice(support_ids)) or None
         try:
             event = update_event_support(token, event_id, support_id)
@@ -98,7 +94,32 @@ def update(ctx):
 @click.pass_context
 def display(ctx):
     token = ctx.obj["token"]
-    events, event_ids = get_events()
+
+    support_id = False
+    filter_by_support = False
+    filter_by_empty_support = False
+
+    payload = decode_token(token)
+    collaborator_role = payload.get("role")
+    collaborator_id = payload.get("id")
+
+    # gestion ajout de filtres (pas de support associé : gestion)
+    if collaborator_role == "gestion":
+        filter_by_empty_support = click.prompt(
+            "Voulez-vous ajouter le filtre pour afficher les événements sans supports associés ? (Entrée pour ignorer)",
+            type=click.BOOL, default="", show_default=False)
+
+    # gestion ajout de filtres (du support connecté)
+    if collaborator_role == "support":
+        filter_by_support = click.prompt(
+            "Voulez-vous ajouter le filtre pour afficher les événements qui vous sont attribués ? (Entrée pour ignorer)",
+            type=click.BOOL, default="", show_default=False)
+        if filter_by_support:
+            support_id = collaborator_id
+
+
+    events, event_ids = get_events(support_id, filter_by_support, filter_by_empty_support)
+
     event_id = click.prompt(f"\nListe des événements :\n{events}\n\n"
                             "N° id de l'événnement à afficher", type=click.Choice(event_ids))
     display_event(token, event_id)

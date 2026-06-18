@@ -5,7 +5,7 @@ from views.views import view_display_event
 from auth.auth import decode_token
 
 @require_role("commercial")
-def create_event(token, name, contract_id, support_id, date_start, date_end, location, attendees, notes):
+def create_event(token, name, contract_id, date_start, date_end, location, attendees, notes):
     payload = decode_token(token)
     collaborator_id = payload.get("id")
 
@@ -22,7 +22,6 @@ def create_event(token, name, contract_id, support_id, date_start, date_end, loc
     event = Event(name=name,
                   contract_id=int(contract_id),
                   customer_id=int(contract.customer_id),
-                  support_id=int(support_id),
                   date_start=date_start,
                   date_end=date_end,
                   location=location,
@@ -81,8 +80,16 @@ def display_event(token, event_id):
     view_display_event(event)
 
 
-def get_events():
-    events = session.query(Event).all()
+def get_events(support_id=False, filter_by_support=False, filter_by_empty_support=False):
+    # gestion ajout de filtres (pas de support associé : gestion) (du support connecté)
+    query = session.query(Event)
+    if filter_by_support and support_id:
+        query = query.filter(Event.support_id == support_id)
+    if filter_by_empty_support:
+        query = query.filter(Event.support_id is None)
+
+    events = query.all()
+
     liste = "\n\n".join(
         f" id : {e.id} - nom : {e.name} "
         f"\n date de départ : {e.date_start} - date de fin : {e.date_end} "
