@@ -1,5 +1,5 @@
 import click
-from auth import login
+from auth.auth import login
 from token_storage import save_token, delete_token
 
 

@@ -1,5 +1,5 @@
 import functools
-from auth import decode_token
+from auth.auth import decode_token
 
 
 
