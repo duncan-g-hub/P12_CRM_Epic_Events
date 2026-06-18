@@ -60,7 +60,7 @@ def update(ctx):
                          default="", show_default=False).strip() or None
 
     role_id = click.prompt(
-        "Nouveau rôle (1/2/3) (Entrée pour ignorer)",
+        "Nouveau rôle (1:commercial / 2:support / 3:gestion) (Entrée pour ignorer)",
         default="", show_default=False,
         type=click.Choice(["", "1", "2", "3"])
     ) or None
