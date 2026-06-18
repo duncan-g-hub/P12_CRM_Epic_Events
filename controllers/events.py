@@ -89,7 +89,7 @@ def get_events(support_id=None, filter_by_support=False, filter_by_empty_support
     events = query.all()
 
     liste = "\n\n".join(
-        f" id : {e.id} - nom : {e.name} "
+        f" nom : {e.name} (id : {e.id}) "
         f"\n date de départ : {e.date_start} - date de fin : {e.date_end} "
         f"\n adresse : {e.location}" for e in events)
     valid_ids = [str(e.id) for e in events]

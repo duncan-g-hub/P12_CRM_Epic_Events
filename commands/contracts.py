@@ -1,7 +1,7 @@
 import click
 
 from controllers.contracts import create_contract, get_contracts, display_contract, update_contract
-from controllers.customers import get_customers, get_customer_name
+from controllers.customers import get_customers
 from controllers.collaborators import get_commercials
 from auth.auth import decode_token
 
@@ -32,8 +32,7 @@ def create(ctx):
 
     try:
         contract = create_contract(token, customer_id, commercial_id, total_amount, amount_to_pay, signed)
-        customer_name = get_customer_name(contract.customer_id)
-        click.echo(click.style(f"Contrat pour le client {customer_name} créé.", fg="green"))
+        click.echo(click.style(f"Contrat pour le client {contract.customer.name} créé.", fg="green"))
 
     except PermissionError as e:
         click.echo(click.style(f"{e}", fg="red"))
@@ -68,8 +67,7 @@ def update(ctx):
 
     try:
         contract = update_contract(token, contract_id, customer_id, commercial_id, total_amount, amount_to_pay, signed)
-        customer_name = get_customer_name(contract.customer_id)
-        click.echo(click.style(f"Contrat pour le client {customer_name} mis à jour.", fg="green"))
+        click.echo(click.style(f"Contrat pour le client {contract.customer.name} mis à jour.", fg="green"))
     except PermissionError as e:
         click.echo(click.style(str(e), fg="red"))
 

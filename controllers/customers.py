@@ -61,11 +61,6 @@ def display_customer(token, customer_id):
 def get_customers():
     customers = session.query(Customer).all()
     liste = "\n".join(
-        f" id : {c.id} - Nom : {c.name}" for c in customers)
+        f" nom : {c.name} (id : {c.id})" for c in customers)
     valid_ids = [str(c.id) for c in customers]
     return liste, valid_ids
-
-
-def get_customer_name(customer_id):
-    customer_name = session.query(Customer.name).filter(Customer.id == customer_id).scalar()
-    return customer_name
