@@ -25,7 +25,8 @@ def view_display_customer(c):
           f"Client sélectionné : "
           f"\n nom : {c.name} (id : {c.id}) "
           f"\n email : {c.email} - téléphone : {c.phone}"
-          f"\n entreprise : {c.company_name} - id commercial : {c.commercial_id}"
+          f"\n entreprise : {c.company_name} "
+          f"\n commercial : {c.commercial.name} (id : {c.commercial_id})"
           "\n----------------------------------\n")
 
 
