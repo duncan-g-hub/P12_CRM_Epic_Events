@@ -1,9 +1,12 @@
 import click
+from functools import partial
 
-from controllers.events import create_event, get_events, display_event, update_event, update_event_support
+from controllers.events import create_event, get_events, display_event, update_event, update_event_support, get_event
 from controllers.contracts import get_contracts
 from controllers.collaborators import get_supports
 from auth.auth import decode_token
+from validators import validate_future_date, validate_date_end
+from commands.utils import validate_prompt
 
 
 @click.group("events")
@@ -25,8 +28,12 @@ def create(ctx):
     contract_id = click.prompt(f"\nContrats disponibles :\n{contracts}\n\n"
                                "N° id du contrat", type=click.Choice(contract_ids))
 
-    date_start = click.prompt("Date de départ (JJ/MM/AAAA)", type=click.DateTime(formats=["%d/%m/%Y"]))
-    date_end = click.prompt("Date de fin (JJ/MM/AAAA)", type=click.DateTime(formats=["%d/%m/%Y"]))
+    date_start = validate_prompt("Date de départ (JJ/MM/AAAA)",validate_future_date,
+                                 type=click.DateTime(formats=["%d/%m/%Y"]))
+    validate_fn = partial(validate_date_end, date_start)
+    date_end = validate_prompt("Date de fin (JJ/MM/AAAA)", validate_fn,
+                               type=click.DateTime(formats=["%d/%m/%Y"]))
+
     location = click.prompt("Adresse")
     attendees = click.prompt("Nombre de participants", type=int)
     notes = click.prompt("Commentaires")
@@ -60,10 +67,16 @@ def update(ctx):
                                    "N° id du contrat", default="", show_default=False,
                                    type=click.Choice(contract_ids)) or None
 
-        date_start = click.prompt("Date de départ (JJ/MM/AAAA) (Entrée pour ignorer)",
-                                  type=click.DateTime(formats=["%d/%m/%Y"]), default=None, show_default=False) or None
-        date_end = click.prompt("Date de fin (JJ/MM/AAAA) (Entrée pour ignorer)",
-                                type=click.DateTime(formats=["%d/%m/%Y"]), default=None, show_default=False) or None
+
+        date_start = validate_prompt("Date de départ (JJ/MM/AAAA) (Entrée pour ignorer)", validate_future_date,
+                                     type=click.DateTime(formats=["%d/%m/%Y"]), optional=True, default=None,
+                                     show_default=False) or None
+
+        reference_date_start = date_start if date_start else get_event(event_id).date_start
+        validate_fn = partial(validate_date_end,reference_date_start)
+        date_end = validate_prompt("Date de fin (JJ/MM/AAAA) (Entrée pour ignorer)", validate_fn,
+                                type=click.DateTime(formats=["%d/%m/%Y"]), optional=True,
+                                default=None, show_default=False) or None
 
         location = click.prompt("Adresse (Entrée pour ignorer)", default="", show_default=False).strip() or None
 
