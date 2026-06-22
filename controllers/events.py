@@ -34,7 +34,6 @@ def create_event(token, name, contract_id, date_start, date_end, location, atten
                   notes=notes
                   )
 
-    # Gerer les formats et gestion erreur sur les dates
     session.add(event)
     session.commit()
     return event
