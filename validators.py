@@ -2,13 +2,26 @@ from datetime import datetime
 import re
 
 
-def validate_date(date: str) -> datetime:
-    format = "%d/%m/%Y"
+def validate_date(date):
+    if isinstance(date, datetime):
+        return date
     try:
-        datetime.strptime(date, format)
+        return datetime.strptime(date, "%d/%m/%Y")
     except ValueError:
-        print(f"Format de date invalide, veuillez saisir une date au format JJ/MM/AAAA")
+        raise ValueError("Format de date invalide, veuillez saisir une date au format JJ/MM/AAAA")
+
+
+def validate_future_date(date):
+    if date < datetime.now():
+        raise ValueError("La date ne peut pas être dans le passé")
     return date
+
+
+def validate_date_end(date_start, date_end):
+    if date_start > date_end:
+        raise ValueError("La date de fin ne peut pas etre antérieur à la date de départ")
+    return date_end
+
 
 
 def validate_phone(phone):
