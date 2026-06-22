@@ -14,7 +14,7 @@ def view_display_contract(c):
     print("\n----------------------------------\n"
           f"Contrat sélectionné : "
           f"\n id : {c.id}"
-          f"\n commercial : {c.commercial.name} (id : {c.commercial_id})"
+          f"\n commercial : {c.customer.commercial.name} (id : {c.customer.commercial_id})"
           f"\n client : {c.customer.name} (id : {c.customer_id})"
           f"\n montant total : {c.total_amount}€ - montant à payer : {c.amount_to_pay}€ - signé : {signed}"
           "\n----------------------------------\n")
@@ -26,7 +26,7 @@ def view_display_customer(c):
           f"\n nom : {c.name} (id : {c.id}) "
           f"\n email : {c.email} - téléphone : {c.phone}"
           f"\n entreprise : {c.company_name} "
-          f"\n commercial : {c.customer.commercial.name} (id : {c.customer.commercial_id})"
+          f"\n commercial : {c.commercial.name} (id : {c.commercial_id})"
           "\n----------------------------------\n")
 
 

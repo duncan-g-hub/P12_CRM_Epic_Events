@@ -25,7 +25,7 @@ def create(ctx):
     click.echo("Création d'un événement:\n")
     name = click.prompt("Nom de l'événement")
     try:
-        contracts, contract_ids = get_contracts()
+        contracts, contract_ids = get_contracts() #il faudrait afficher uniquement les contrats issues des clients du commercial connecté
     except ValueError as e:
         click.echo(click.style(str(e), fg="red"))
         return
