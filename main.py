@@ -7,10 +7,10 @@ from commands.collaborators import collaborators_group
 from commands.customers import customers_group
 from commands.contracts import contracts_group
 from commands.events import events_group
-from token_storage import load_token
+from token_storage import load_token, delete_token
 
 # Créer les tables
-# Base.metadata.drop_all(engine)   # supprime toutes les tables
+Base.metadata.drop_all(engine)   # supprime toutes les tables
 Base.metadata.create_all(engine)
 
 # Alimenter les rôles si la table est vide
@@ -39,4 +39,15 @@ cli.add_command(contracts_group)
 cli.add_command(events_group)
 
 if __name__ == "__main__":
-    cli()
+    try:
+        cli()
+        # cli(standalone_mode=False)
+    except PermissionError as e:
+        click.echo(click.style(str(e), fg="red"))
+        if "expiré" in str(e):
+            delete_token()
+            click.echo(click.style("Veuillez vous reconnecter.", fg="yellow"))
+    except click.exceptions.Abort:
+        pass
+    except click.exceptions.Exit:
+        pass
