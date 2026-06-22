@@ -3,10 +3,12 @@ from database import session
 from views.views import view_display_contract
 from auth.permissions import require_role
 from auth.auth import decode_token
+from validators import validate_amount_to_pay
 
 
 @require_role("gestion")
 def create_contract(token, customer_id, commercial_id, total_amount, amount_to_pay, signed):
+    validate_amount_to_pay(amount_to_pay, total_amount)
     contract = Contract(customer_id=int(customer_id),
                         commercial_id=int(commercial_id),
                         total_amount=float(total_amount),
@@ -38,6 +40,7 @@ def update_contract(token, contract_id, customer_id, commercial_id, total_amount
     if total_amount is not None:
         contract.total_amount = float(total_amount)
     if amount_to_pay is not None:
+        validate_amount_to_pay(amount_to_pay, total_amount)
         contract.amount_to_pay = float(amount_to_pay)
     if signed is not None:
         contract.signed = signed
@@ -69,3 +72,8 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
         f"\n commercial : {c.commercial.name} (id : {c.commercial_id})" for c in contracts)
     valid_ids = [str(c.id) for c in contracts]
     return liste, valid_ids
+
+
+def get_contract(contract_id):
+    contract = session.query(Contract).filter(Contract.id == contract_id).first()
+    return contract

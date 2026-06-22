@@ -1,10 +1,11 @@
 import click
-
-from controllers.contracts import create_contract, get_contracts, display_contract, update_contract
+from functools import partial
+from controllers.contracts import create_contract, get_contracts, display_contract, update_contract, get_contract
 from controllers.customers import get_customers
 from controllers.collaborators import get_commercials
 from auth.auth import decode_token
-
+from utils import validate_prompt
+from validators import validate_amount_to_pay
 
 @click.group("contracts")
 def contracts_group():
@@ -26,8 +27,11 @@ def create(ctx):
     commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\n"
                                  "N° id du commercial", type=click.Choice(commercial_ids))
 
-    total_amount = click.prompt("Montant total", type=float)
-    amount_to_pay = click.prompt("Reste à payer", type=float)
+    total_amount = click.prompt("Montant total €", type=float)
+
+    validate_function = partial(validate_amount_to_pay, total_amount=total_amount)
+    amount_to_pay = validate_prompt("Reste à payer €", validate_function, type=float)
+
     signed = click.prompt("Contrat signé ?", type=click.BOOL)
 
     try:
@@ -58,10 +62,19 @@ def update(ctx):
                                  "N° id du nouveau commercial (Entrée pour ignorer)",
                                  default="", show_default=False, type=click.Choice(commercial_ids)) or None
 
-    total_amount = click.prompt("Nouveau montant total (Entrée pour ignorer)",
+
+
+    contract = get_contract(contract_id)
+    total_amount = click.prompt("Nouveau montant total € (Entrée pour ignorer)",
                                 type=float, default="", show_default=False) or None
-    amount_to_pay = click.prompt("Nouveau reste à payer (Entrée pour ignorer)",
-                                 type=float, default="", show_default=False) or None
+
+    reference_total = total_amount if total_amount is not None else contract.total_amount
+    validate_fn = partial(validate_amount_to_pay, total_amount=reference_total)
+    amount_to_pay = validate_prompt("Nouveau reste à payer € (Entrée pour ignorer)",
+                                    validate_fn, optional=True,
+                                    type=float, default="", show_default=False)
+
+
     signed = click.prompt("Contrat signé ? (Entrée pour ignorer)",
                           type=click.BOOL, default="", show_default=False) or None
 
