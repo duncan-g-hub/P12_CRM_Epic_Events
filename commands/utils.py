@@ -5,7 +5,10 @@ def validate_prompt(prompt, validate_function, optional=False, **kwargs):
     while True:
         value = click.prompt(prompt, **kwargs)
 
-        if optional and not value.strip():
+        if isinstance(value, str):
+            value = value.strip()
+
+        if optional and (value is None or value == "" or value == 0.0):
             return None
 
         try:

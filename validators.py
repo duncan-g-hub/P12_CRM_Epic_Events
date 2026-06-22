@@ -10,10 +10,12 @@ def validate_date(date: str) -> datetime:
         print(f"Format de date invalide, veuillez saisir une date au format JJ/MM/AAAA")
     return date
 
+
 def validate_phone(phone):
     if not re.fullmatch(r"^(0|\+33)\d{9}$", phone):
         raise ValueError("Format de n° de téléphone invalide (ex: 0612345678)")
     return phone
+
 
 def validate_email(email):
     pattern = "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]"
@@ -28,3 +30,9 @@ def validate_password(password):
     if not re.search(r"[A-Z]", password):
         raise ValueError("Mot de passe invalide : Au moins une majuscule requise")
     return password
+
+
+def validate_amount_to_pay(amount, total_amount):
+    if amount > total_amount:
+        raise ValueError("Le montant restant à payer ne peut pas être supérieur au montant total.")
+    return amount

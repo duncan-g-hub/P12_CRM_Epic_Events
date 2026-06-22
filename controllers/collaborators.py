@@ -4,15 +4,15 @@ from models.models import Collaborator, Role
 from database import session
 from auth.permissions import require_role
 from views.views import view_display_collaborator
-import validators
+from validators import validate_email, validate_password, validate_phone
 
 
 @require_role("gestion")
 def create_collaborator(token, name, email, password, phone, role_id):
 
-    validators.validate_email(email)
-    validators.validate_password(password)
-    validators.validate_phone(phone)
+    validate_email(email)
+    validate_password(password)
+    validate_phone(phone)
 
     # hachage du mdp :
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
@@ -38,7 +38,7 @@ def update_collaborator(token, collaborator_id, name, email, password, phone, ro
     if name:
         collaborator.name = name
     if email:
-        validators.validate_email(email)
+        validate_email(email)
         existing = session.query(Collaborator).filter(
             Collaborator.email == email,
             Collaborator.id != collaborator_id
@@ -47,12 +47,12 @@ def update_collaborator(token, collaborator_id, name, email, password, phone, ro
             raise ValueError(f"L'email '{email}' est déjà utilisé.")
         collaborator.email = email
     if password:
-        validators.validate_password(password)
+        validate_password(password)
         # hachage du mdp :
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
         collaborator.password = hashed_password.decode("utf-8")
     if phone:
-        validators.validate_phone(phone)
+        validate_phone(phone)
         collaborator.phone = phone
     if role_id:
         collaborator.role_id = int(role_id)
