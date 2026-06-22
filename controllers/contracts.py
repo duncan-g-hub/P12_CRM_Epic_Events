@@ -40,7 +40,8 @@ def update_contract(token, contract_id, customer_id, commercial_id, total_amount
     if total_amount is not None:
         contract.total_amount = float(total_amount)
     if amount_to_pay is not None:
-        validate_amount_to_pay(amount_to_pay, total_amount)
+        total_amount_reference = total_amount if total_amount is not None else contract.total_amount
+        validate_amount_to_pay(amount_to_pay, total_amount_reference)
         contract.amount_to_pay = float(amount_to_pay)
     if signed is not None:
         contract.signed = signed

@@ -29,8 +29,8 @@ def create(ctx):
 
     total_amount = click.prompt("Montant total €", type=float)
 
-    validate_function = partial(validate_amount_to_pay, total_amount=total_amount)
-    amount_to_pay = validate_prompt("Reste à payer €", validate_function, type=float)
+    validate_fn = partial(validate_amount_to_pay, total_amount=total_amount)
+    amount_to_pay = validate_prompt("Reste à payer €", validate_fn, type=float)
 
     signed = click.prompt("Contrat signé ?", type=click.BOOL)
 
@@ -63,12 +63,10 @@ def update(ctx):
                                  default="", show_default=False, type=click.Choice(commercial_ids)) or None
 
 
-
-    contract = get_contract(contract_id)
     total_amount = click.prompt("Nouveau montant total € (Entrée pour ignorer)",
                                 type=float, default="", show_default=False) or None
 
-    reference_total = total_amount if total_amount is not None else contract.total_amount
+    reference_total = total_amount if total_amount is not None else get_contract(contract_id).total_amount
     validate_fn = partial(validate_amount_to_pay, total_amount=reference_total)
     amount_to_pay = validate_prompt("Nouveau reste à payer € (Entrée pour ignorer)",
                                     validate_fn, optional=True,
