@@ -6,7 +6,7 @@ from controllers.contracts import get_contracts
 from controllers.collaborators import get_supports
 from auth.auth import decode_token
 from validators import validate_future_date, validate_date_end
-from commands.utils import validate_prompt
+from commands.utils import validate_prompt, require_cli_role
 
 
 @click.group("events")
@@ -17,6 +17,7 @@ def events_group():
 
 @events_group.command("create")
 @click.pass_context
+@require_cli_role("commercial")
 def create(ctx):
     """Créer un événement"""
     token = ctx.obj["token"]
@@ -52,6 +53,7 @@ def create(ctx):
 
 @events_group.command("update")
 @click.pass_context
+@require_cli_role("gestion", "support")
 def update(ctx):
     token = ctx.obj["token"]
     payload = decode_token(token)
@@ -120,6 +122,7 @@ def update(ctx):
 
 @events_group.command("display")
 @click.pass_context
+@require_cli_role("commercial", "gestion", "support")
 def display(ctx):
     token = ctx.obj["token"]
 

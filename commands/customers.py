@@ -4,8 +4,7 @@ from controllers.customers import create_customer, display_customer, get_custome
 from controllers.collaborators import get_commercials
 from auth.auth import decode_token
 from validators import validate_email, validate_phone
-from commands.utils import validate_prompt
-
+from commands.utils import validate_prompt, require_cli_role
 
 @click.group("customers")
 def customers_group():
@@ -15,6 +14,7 @@ def customers_group():
 
 @customers_group.command("create")
 @click.pass_context
+@require_cli_role("commercial")
 def create(ctx):
     """Créer un client"""
 
@@ -25,13 +25,7 @@ def create(ctx):
     phone = validate_prompt("Numéro de téléphone", validate_phone)
     company_name = click.prompt("Nom de l'entreprise")
 
-    try:
-        commercials, commercial_ids = get_commercials()
-    except ValueError as e:
-        click.echo(click.style(str(e), fg="red"))
-        return
-    commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\nN° id du commercial",
-                                 type=click.Choice(commercial_ids))
+    commercial_id = decode_token(token).get("id")
 
     try:
         customer = create_customer(token, name, email, phone, company_name, commercial_id)
@@ -42,6 +36,7 @@ def create(ctx):
 
 @customers_group.command("update")
 @click.pass_context
+@require_cli_role("commercial", "gestion")
 def update(ctx):
     """Modifier un client"""
     token = ctx.obj["token"]
@@ -92,6 +87,7 @@ def update(ctx):
 
 @customers_group.command("display")
 @click.pass_context
+@require_cli_role("commercial", "gestion", "support")
 def display(ctx):
     token = ctx.obj["token"]
     click.echo("Affichage des détails d'un client:\n")

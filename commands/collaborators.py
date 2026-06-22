@@ -1,6 +1,6 @@
 import click
 from controllers.collaborators import create_collaborator, get_collaborators, display_collaborator, update_collaborator
-from commands.utils import validate_prompt
+from commands.utils import validate_prompt, require_cli_role
 from validators import validate_email, validate_phone, validate_password
 
 @click.group("collaborators")
@@ -11,6 +11,7 @@ def collaborators_group():
 
 @collaborators_group.command("create")
 @click.pass_context
+@require_cli_role("gestion")
 def create(ctx, ):
     """Créer un collaborateur (gestion uniquement)"""
     token = ctx.obj["token"]
@@ -39,6 +40,7 @@ def create(ctx, ):
 
 @collaborators_group.command("update")
 @click.pass_context
+@require_cli_role("gestion")
 def update(ctx):
     token = ctx.obj["token"]
     click.echo("Modification d'un collaborateur:\n")
@@ -81,6 +83,7 @@ def update(ctx):
 
 @collaborators_group.command("display")
 @click.pass_context
+@require_cli_role("commercial", "gestion", "support")
 def display(ctx):
     token = ctx.obj["token"]
     click.echo("Affichage des détails d'un collaborateur:\n")

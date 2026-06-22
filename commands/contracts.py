@@ -4,7 +4,7 @@ from controllers.contracts import create_contract, get_contracts, display_contra
 from controllers.customers import get_customers
 from controllers.collaborators import get_commercials
 from auth.auth import decode_token
-from commands.utils import validate_prompt
+from commands.utils import validate_prompt, require_cli_role
 from validators import validate_amount_to_pay
 
 @click.group("contracts")
@@ -15,6 +15,7 @@ def contracts_group():
 
 @contracts_group.command("create")
 @click.pass_context
+@require_cli_role("gestion")
 def create(ctx):
     """Créer un contrat"""
     token = ctx.obj["token"]
@@ -51,6 +52,7 @@ def create(ctx):
 
 @contracts_group.command("update")
 @click.pass_context
+@require_cli_role("commercial", "gestion")
 def update(ctx):
     token = ctx.obj["token"]
     click.echo("Modification d'un contrat:\n")
@@ -104,6 +106,7 @@ def update(ctx):
 
 @contracts_group.command("display")
 @click.pass_context
+@require_cli_role("commercial", "gestion", "support")
 def display(ctx):
     token = ctx.obj["token"]
     click.echo("Affichage des détails d'un contrat:\n")
