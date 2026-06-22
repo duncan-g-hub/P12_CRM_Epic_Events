@@ -67,7 +67,7 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
     contracts = query.all()
     if not contracts:
         raise ValueError("Contrats introuvables.")
-    liste = "\n".join(
+    liste = "\n\n".join(
         f" id : {c.id} "
         f"\n client : {c.customer.name} (id : {c.customer_id})"
         f"\n commercial : {c.customer.commercial.name} (id : {c.customer.commercial_id})" for c in contracts)
