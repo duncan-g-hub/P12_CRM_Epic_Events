@@ -15,7 +15,7 @@ def require_role(*allowed_roles):  # capture tous les rôles passés en argument
             payload = decode_token(token)  # Décode le token
             if payload.get("role") not in allowed_roles:  # verifie le role
                 raise PermissionError(
-                    f"Accès refusé. Rôles autorisés : {allowed_roles}"
+                    f"Accès refusé. Rôle(s) autorisé(s) : {allowed_roles}"
                 )
             return func(token, *args, **kwargs)  # execute la vrai fonction
 

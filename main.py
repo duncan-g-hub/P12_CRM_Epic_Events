@@ -9,9 +9,9 @@ from commands.contracts import contracts_group
 from commands.events import events_group
 from token_storage import load_token, delete_token
 
-# Créer les tables
-Base.metadata.drop_all(engine)   # supprime toutes les tables
-Base.metadata.create_all(engine)
+
+# Base.metadata.drop_all(engine)   # supprime toutes les tables
+Base.metadata.create_all(engine)    # Créer les tables
 
 # Alimenter les rôles si la table est vide
 if not session.query(Role).first():

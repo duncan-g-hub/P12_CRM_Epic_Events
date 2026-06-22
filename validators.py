@@ -25,14 +25,14 @@ def validate_date_end(date_start, date_end):
 
 
 def validate_phone(phone):
-    if not re.fullmatch(r"^(0|\+33)\d{9}$", phone):
+    if not re.match(r"^(0|\+33)\d{9}$", phone):
         raise ValueError("Format de n° de téléphone invalide (ex: 0612345678)")
     return phone
 
 
 def validate_email(email):
     pattern = "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]"
-    if not re.fullmatch(pattern, email):
+    if not re.match(pattern, email):
         raise ValueError("Format d'email invalide (ex: mon-email@email.com)")
     return email
 
