@@ -42,7 +42,11 @@ def create(ctx, ):
 def update(ctx):
     token = ctx.obj["token"]
     click.echo("Modification d'un collaborateur:\n")
-    collaborators, collaborator_ids = get_collaborators()
+    try:
+        collaborators, collaborator_ids = get_collaborators()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     collaborator_id = click.prompt(
         f"\nListe des collaborateurs :\n{collaborators}\n\nN° id du collaborateur à modifier",
         type=click.Choice(collaborator_ids))
@@ -59,7 +63,7 @@ def update(ctx):
             password = validate_prompt("Nouveau mot de passe", validate_password, hide_input=True)
             confirm = click.prompt("Confirmer mot de passe", hide_input=True)
 
-    phone = validate_prompt("Nouveau téléphone (Entrée pour ignorer)", validate_phone, optionnal=True,
+    phone = validate_prompt("Nouveau téléphone (Entrée pour ignorer)", validate_phone, optional=True,
                             default="", show_default=False)
 
     role_id = click.prompt(
@@ -71,7 +75,7 @@ def update(ctx):
     try:
         collaborator = update_collaborator(token, collaborator_id, name, email, password, phone, role_id)
         click.echo(click.style(f"Collaborateur '{collaborator.name}' mis à jour.", fg="green"))
-    except PermissionError as e:
+    except (PermissionError, ValueError) as e:
         click.echo(click.style(str(e), fg="red"))
 
 
@@ -80,7 +84,13 @@ def update(ctx):
 def display(ctx):
     token = ctx.obj["token"]
     click.echo("Affichage des détails d'un collaborateur:\n")
-    collaborators, collaborator_ids = get_collaborators()
+
+    try:
+        collaborators, collaborator_ids = get_collaborators()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
+
     collaborator_id = click.prompt(f"\nListe des collaborateurs :\n{collaborators}\n\n"
                                    "N° id du collaborateur à afficher", type=click.Choice(collaborator_ids))
     display_collaborator(token, collaborator_id)

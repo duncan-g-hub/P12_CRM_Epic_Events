@@ -4,7 +4,7 @@ from controllers.contracts import create_contract, get_contracts, display_contra
 from controllers.customers import get_customers
 from controllers.collaborators import get_commercials
 from auth.auth import decode_token
-from utils import validate_prompt
+from commands.utils import validate_prompt
 from validators import validate_amount_to_pay
 
 @click.group("contracts")
@@ -19,11 +19,18 @@ def create(ctx):
     """Créer un contrat"""
     token = ctx.obj["token"]
     click.echo("Création d'un contrat:\n")
-    customers, customer_ids = get_customers()
+    try:
+        customers, customer_ids = get_customers()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\n"
                                "N° id du client", type=click.Choice(customer_ids))
-
-    commercials, commercial_ids = get_commercials()
+    try:
+        commercials, commercial_ids = get_commercials()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\n"
                                  "N° id du commercial", type=click.Choice(commercial_ids))
 
@@ -47,17 +54,29 @@ def create(ctx):
 def update(ctx):
     token = ctx.obj["token"]
     click.echo("Modification d'un contrat:\n")
-    contracts, contract_ids = get_contracts()
+    try:
+        contracts, contract_ids = get_contracts()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     contract_id = click.prompt(
         f"\nListe des contrats :\n{contracts}\n\n"
         "N° id du contrat à modifier", type=click.Choice(contract_ids))
 
-    customers, customer_ids = get_customers()
+    try:
+        customers, customer_ids = get_customers()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\n"
                                "N° id du nouveau client (Entrée pour ignorer)",
                                default="", show_default=False, type=click.Choice(customer_ids)) or None
 
-    commercials, commercial_ids = get_commercials()
+    try:
+        commercials, commercial_ids = get_commercials()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\n"
                                  "N° id du nouveau commercial (Entrée pour ignorer)",
                                  default="", show_default=False, type=click.Choice(commercial_ids)) or None
@@ -79,7 +98,7 @@ def update(ctx):
     try:
         contract = update_contract(token, contract_id, customer_id, commercial_id, total_amount, amount_to_pay, signed)
         click.echo(click.style(f"Contrat pour le client {contract.customer.name} mis à jour.", fg="green"))
-    except PermissionError as e:
+    except (PermissionError, ValueError) as e:
         click.echo(click.style(str(e), fg="red"))
 
 
@@ -112,8 +131,12 @@ def display(ctx):
             "Voulez-vous ajouter le filtre pour afficher les contrats non signés ? (Entrée pour ignorer)",
             type=click.BOOL, default="", show_default=False)
 
-    contracts, contract_ids = get_contracts(commercial_id, filter_by_commercial, filter_by_amount_to_pay,
+    try:
+        contracts, contract_ids = get_contracts(commercial_id, filter_by_commercial, filter_by_amount_to_pay,
                                             filter_by_signed)
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
 
     contract_id = click.prompt(f"\nListe des contrats :\n{contracts}\n\n"
                                "N° id du contrat à afficher", type=click.Choice(contract_ids))

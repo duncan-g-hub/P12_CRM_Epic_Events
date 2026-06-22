@@ -9,6 +9,10 @@ from validators import validate_email, validate_phone
 def create_customer(token, name, email, phone, company_name, commercial_id):
     validate_email(email)
     validate_phone(phone)
+    existing = session.query(Customer).filter(Customer.email == email).first()
+    if existing:
+        raise ValueError(f"L'email '{email}' est déjà utilisé.")
+
     customer = Customer(name=name,
                         email=email,
                         phone=phone,
@@ -27,6 +31,8 @@ def update_customer(token, customer_id, name, email, phone, company_name):
     collaborator_id = payload.get("id")
 
     customer = session.query(Customer).filter(Customer.id == customer_id).first()
+    if not customer:
+        raise ValueError(f"Client introuvable.")
 
     if customer.commercial_id != collaborator_id:
         raise PermissionError("Vous ne pouvez modifier que les clients dont vous êtes responsable.")
@@ -48,6 +54,9 @@ def update_customer(token, customer_id, name, email, phone, company_name):
 @require_role("gestion")
 def update_customer_commercial(token, customer_id, commercial_id):
     customer = session.query(Customer).filter(Customer.id == customer_id).first()
+    if not customer:
+        raise ValueError(f"Client introuvable.")
+
     if commercial_id:
         customer.commercial_id = commercial_id
 
@@ -63,6 +72,8 @@ def display_customer(token, customer_id):
 
 def get_customers():
     customers = session.query(Customer).all()
+    if not customers:
+        raise ValueError("Clients introuvables.")
     liste = "\n".join(
         f" nom : {c.name} (id : {c.id})" for c in customers)
     valid_ids = [str(c.id) for c in customers]

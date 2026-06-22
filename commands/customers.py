@@ -25,7 +25,11 @@ def create(ctx):
     phone = validate_prompt("Numéro de téléphone", validate_phone)
     company_name = click.prompt("Nom de l'entreprise")
 
-    commercials, commercial_ids = get_commercials()
+    try:
+        commercials, commercial_ids = get_commercials()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\nN° id du commercial",
                                  type=click.Choice(commercial_ids))
 
@@ -44,7 +48,11 @@ def update(ctx):
     payload = decode_token(token)
     collaborator_role = payload.get("role")
     click.echo("Modification d'un client:\n")
-    customers, customer_ids = get_customers()
+    try:
+        customers, customer_ids = get_customers()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     customer_id = click.prompt(f"\nListe des Clients :\n{customers}\n\n"
                                "N° id du client à modifier", type=click.Choice(customer_ids))
 
@@ -63,18 +71,22 @@ def update(ctx):
         try:
             customer = update_customer(token, customer_id, name, email, phone, company_name)
             click.echo(click.style(f"Client '{customer.name}' mis à jour.", fg="green"))
-        except PermissionError as e:
+        except (PermissionError, ValueError) as e:
             click.echo(click.style(f"{e}", fg="red"))
 
     if collaborator_role == "gestion":
-        commercials, commercial_ids = get_commercials()
+        try:
+            commercials, commercial_ids = get_commercials()
+        except ValueError as e:
+            click.echo(click.style(str(e), fg="red"))
+            return
         commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\n"
                                      "N° id du nouveau commercial (Entrée pour ignorer)",
                                      default="", show_default=False, type=click.Choice(commercial_ids)) or None
         try:
             customer = update_customer_commercial(token, customer_id, commercial_id)
             click.echo(click.style(f"Client '{customer.name}' mis à jour.", fg="green"))
-        except PermissionError as e:
+        except (PermissionError, ValueError) as e:
             click.echo(click.style(f"{e}", fg="red"))
 
 
@@ -83,7 +95,11 @@ def update(ctx):
 def display(ctx):
     token = ctx.obj["token"]
     click.echo("Affichage des détails d'un client:\n")
-    customers, customer_ids = get_customers()
+    try:
+        customers, customer_ids = get_customers()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     customer_id = click.prompt(f"\nListe de des clients :\n{customers}\n\n"
                                "N° id du client à afficher", type=click.Choice(customer_ids))
     display_customer(token, customer_id)

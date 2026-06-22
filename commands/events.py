@@ -23,8 +23,11 @@ def create(ctx):
 
     click.echo("Création d'un événement:\n")
     name = click.prompt("Nom de l'événement")
-
-    contracts, contract_ids = get_contracts()
+    try:
+        contracts, contract_ids = get_contracts()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     contract_id = click.prompt(f"\nContrats disponibles :\n{contracts}\n\n"
                                "N° id du contrat", type=click.Choice(contract_ids))
 
@@ -54,7 +57,11 @@ def update(ctx):
     payload = decode_token(token)
     collaborator_role = payload.get("role")
     click.echo("Modification d'un événement:\n")
-    events, event_ids = get_events()
+    try:
+        events, event_ids = get_events()
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     event_id = click.prompt(f"\nListe des événements :\n{events}\n\n"
                             "N° id de l'événement à modifier", type=click.Choice(event_ids))
 
@@ -62,7 +69,11 @@ def update(ctx):
         name = click.prompt("Nom de l'événement (Entrée pour ignorer)", default="", show_default=False
                             ).strip() or None
 
-        contracts, contract_ids = get_contracts()
+        try:
+            contracts, contract_ids = get_contracts()
+        except ValueError as e:
+            click.echo(click.style(str(e), fg="red"))
+            return
         contract_id = click.prompt(f"\nListe des contrts :\n{contracts}\n\n"
                                    "N° id du contrat", default="", show_default=False,
                                    type=click.Choice(contract_ids)) or None
@@ -70,13 +81,13 @@ def update(ctx):
 
         date_start = validate_prompt("Date de départ (JJ/MM/AAAA) (Entrée pour ignorer)", validate_future_date,
                                      type=click.DateTime(formats=["%d/%m/%Y"]), optional=True, default=None,
-                                     show_default=False) or None
+                                     show_default=False)
 
         reference_date_start = date_start if date_start else get_event(event_id).date_start
         validate_fn = partial(validate_date_end,reference_date_start)
         date_end = validate_prompt("Date de fin (JJ/MM/AAAA) (Entrée pour ignorer)", validate_fn,
                                 type=click.DateTime(formats=["%d/%m/%Y"]), optional=True,
-                                default=None, show_default=False) or None
+                                default=None, show_default=False)
 
         location = click.prompt("Adresse (Entrée pour ignorer)", default="", show_default=False).strip() or None
 
@@ -88,18 +99,22 @@ def update(ctx):
         try:
             event = update_event(token, event_id, name, contract_id, date_start, date_end, location, attendees, notes)
             click.echo(click.style(f"Événement '{event.name}' mis à jour.", fg="green"))
-        except PermissionError as e:
+        except (PermissionError, ValueError) as e:
             click.echo(click.style(f"{e}", fg="red"))
 
     if collaborator_role == "gestion":
-        supports, support_ids = get_supports()
+        try:
+            supports, support_ids = get_supports()
+        except ValueError as e:
+            click.echo(click.style(str(e), fg="red"))
+            return
         support_id = click.prompt(f"\nListe des supports :\n{supports}\n\n"
                                   "N° id du support à associer à l'événement (Entrée pour ignorer)",
                                   default="", show_default=False, type=click.Choice(support_ids)) or None
         try:
             event = update_event_support(token, event_id, support_id)
             click.echo(click.style(f"Événement '{event.name}' mis à jour.", fg="green"))
-        except PermissionError as e:
+        except (PermissionError, ValueError) as e:
             click.echo(click.style(f"{e}", fg="red"))
 
 
@@ -128,9 +143,11 @@ def display(ctx):
             "(Entrée pour ignorer)", type=click.BOOL, default="", show_default=False)
         if filter_by_support:
             support_id = collaborator_id
-
-    events, event_ids = get_events(support_id, filter_by_support, filter_by_empty_support)
-
+    try:
+        events, event_ids = get_events(support_id, filter_by_support, filter_by_empty_support)
+    except ValueError as e:
+        click.echo(click.style(str(e), fg="red"))
+        return
     event_id = click.prompt(f"\nListe des événements :\n{events}\n\n"
                             "N° id de l'événnement à afficher", type=click.Choice(event_ids))
     display_event(token, event_id)

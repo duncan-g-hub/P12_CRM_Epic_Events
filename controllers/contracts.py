@@ -27,6 +27,8 @@ def update_contract(token, contract_id, customer_id, commercial_id, total_amount
     collaborator_id = payload.get("id")
 
     contract = session.query(Contract).filter(Contract.id == contract_id).first()
+    if not contract:
+        raise ValueError(f"Contract introuvable.")
 
     if collaborator_role == "commercial":
         customer = session.query(Customer).filter(Customer.id == contract.customer_id).first()
@@ -66,7 +68,8 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
     if filter_by_signed:
         query = query.filter(Contract.signed == False)
     contracts = query.all()
-
+    if not contracts:
+        raise ValueError("Contrats introuvables.")
     liste = "\n".join(
         f" id : {c.id} "
         f"\n client : {c.customer.name} (id : {c.customer_id})"

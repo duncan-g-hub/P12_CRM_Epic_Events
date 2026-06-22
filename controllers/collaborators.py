@@ -9,7 +9,6 @@ from validators import validate_email, validate_password, validate_phone
 
 @require_role("gestion")
 def create_collaborator(token, name, email, password, phone, role_id):
-
     validate_email(email)
     validate_password(password)
     validate_phone(phone)
@@ -34,6 +33,8 @@ def create_collaborator(token, name, email, password, phone, role_id):
 @require_role("gestion")
 def update_collaborator(token, collaborator_id, name, email, password, phone, role_id):
     collaborator = session.query(Collaborator).filter(Collaborator.id == collaborator_id).first()
+    if not collaborator:
+        raise ValueError(f"Collaborateur introuvable.")
 
     if name:
         collaborator.name = name
@@ -69,6 +70,8 @@ def display_collaborator(token, collaborator_id):
 
 def get_commercials():
     commercials = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "commercial").all()
+    if not commercials:
+        raise ValueError("Il n'éxiste aucun commercial.")
     liste = "\n".join(
         f" id : {c.id} - Nom : {c.name}" for c in commercials)
     valid_ids = [str(c.id) for c in commercials]
@@ -77,6 +80,8 @@ def get_commercials():
 
 def get_supports():
     supports = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "support").all()
+    if not supports:
+        raise ValueError("Il n'éxiste aucun support.")
     liste = "\n".join(
         f" id : {s.id} - Nom : {s.name}" for s in supports)
     valid_ids = [str(s.id) for s in supports]
@@ -85,6 +90,8 @@ def get_supports():
 
 def get_collaborators():
     collaborators = session.query(Collaborator).all()
+    if not collaborators:
+        raise ValueError("Il n'éxiste aucun collaborateurs.")
     liste = "\n".join(
         f" nom : {c.name} (id : {c.id})" for c in collaborators)
     valid_ids = [str(c.id) for c in collaborators]

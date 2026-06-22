@@ -47,6 +47,8 @@ def update_event(token, event_id, name, contract_id, date_start, date_end, locat
     collaborator_id = payload.get("id")
 
     event = session.query(Event).filter(Event.id == event_id).first()
+    if not event:
+        raise ValueError("Événement introuvable.")
 
     if event.support_id != collaborator_id:
         raise PermissionError("Vous ne pouvez modifier que les événements dont vous êtes responsable.")
@@ -76,6 +78,8 @@ def update_event(token, event_id, name, contract_id, date_start, date_end, locat
 @require_role("gestion")
 def update_event_support(token, event_id, support_id):
     event = session.query(Event).filter(Event.id == event_id).first()
+    if not event:
+        raise ValueError("Événement introuvable.")
     if support_id:
         event.support_id = int(support_id)
     session.commit()
@@ -97,7 +101,8 @@ def get_events(support_id=None, filter_by_support=False, filter_by_empty_support
         query = query.filter(Event.support_id.is_(None))
 
     events = query.all()
-
+    if not events:
+        raise ValueError("Événnements introuvables.")
     liste = "\n\n".join(
         f" nom : {e.name} (id : {e.id}) "
         f"\n date de départ : {e.date_start} - date de fin : {e.date_end} "
