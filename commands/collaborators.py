@@ -1,6 +1,7 @@
 import click
 from controllers.collaborators import create_collaborator, get_collaborators, display_collaborator, update_collaborator
-
+from commands.utils import validate_prompt
+from validators import validate_email, validate_phone, validate_password
 
 @click.group("collaborators")
 def collaborators_group():
@@ -15,17 +16,17 @@ def create(ctx, ):
     token = ctx.obj["token"]
     click.echo("Création d'un collaborateur:\n")
     name = click.prompt("Nom complet du collaborateur")
-    email = click.prompt("Adresse email")
+    email = validate_prompt("Adresse email", validate_email)
 
-    password = click.prompt("Mot de passe", hide_input=True)
+    password = validate_prompt("Mot de passe", validate_password, hide_input=True)
     confirm = click.prompt("Confirmer mot de passe", hide_input=True)
 
     while password != confirm:
         click.echo(click.style("Les mots de passe ne correspondent pas.", fg="red"))
-        password = click.prompt("Mot de passe", hide_input=True)
+        password = validate_prompt("Mot de passe", validate_password, hide_input=True)
         confirm = click.prompt("Confirmer mot de passe", hide_input=True)
 
-    phone = click.prompt("Numéro de téléphone")
+    phone = validate_prompt("Numéro de téléphone", validate_phone)
     role_id = click.prompt("Rôle (1:commercial / 2:support / 3:gestion)",
                            type=click.Choice(["1", "2", "3"]))
 
@@ -47,18 +48,19 @@ def update(ctx):
         type=click.Choice(collaborator_ids))
 
     name = click.prompt("Nouveau nom (Entrée pour ignorer)", default="", show_default=False).strip() or None
-    email = click.prompt("Nouvel email (Entrée pour ignorer)", default="", show_default=False).strip() or None
-    password = click.prompt("Nouveau mot de passe (Entrée pour ignorer)", default="", hide_input=True,
-                            show_default=False).strip() or None
+    email = validate_prompt("Nouvel email (Entrée pour ignorer)", validate_email, optional=True, default="",
+                            show_default=False)
+    password = validate_prompt("Nouveau mot de passe (Entrée pour ignorer)", validate_password, optional=True,
+                               default="", hide_input=True, show_default=False)
     if password:
         confirm = click.prompt("Confirmer mot de passe", hide_input=True)
         while password != confirm:
             click.echo(click.style("Les mots de passe ne correspondent pas.", fg="red"))
-            password = click.prompt("Nouveau mot de passe", hide_input=True)
+            password = validate_prompt("Nouveau mot de passe", validate_password, hide_input=True)
             confirm = click.prompt("Confirmer mot de passe", hide_input=True)
 
-    phone = click.prompt("Nouveau téléphone (Entrée pour ignorer)",
-                         default="", show_default=False).strip() or None
+    phone = validate_prompt("Nouveau téléphone (Entrée pour ignorer)", validate_phone, optionnal=True,
+                            default="", show_default=False)
 
     role_id = click.prompt(
         "Nouveau rôle (1:commercial / 2:support / 3:gestion) (Entrée pour ignorer)",
