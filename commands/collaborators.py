@@ -88,8 +88,12 @@ def display(ctx):
     token = ctx.obj["token"]
     click.echo("Affichage des détails d'un collaborateur:\n")
 
+    filter_by_role = click.prompt(
+        "Voulez-vous filtrer les collaborateurs par rôles (1:commercial / 2:support / 3:gestion) ? "
+        "(Entrée pour ignorer)", type = click.Choice(["", "1", "2", "3"]), default="", show_default=False) or None
+
     try:
-        collaborators, collaborator_ids = get_collaborators()
+        collaborators, collaborator_ids = get_collaborators(filter_by_role)
     except ValueError as e:
         click.echo(click.style(str(e), fg="red"))
         return

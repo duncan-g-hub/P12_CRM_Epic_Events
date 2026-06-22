@@ -88,8 +88,11 @@ def get_supports():
     return liste, valid_ids
 
 
-def get_collaborators():
-    collaborators = session.query(Collaborator).all()
+def get_collaborators(filter_by_role=False):
+    if filter_by_role:
+        collaborators = session.query(Collaborator).filter(Collaborator.role_id==int(filter_by_role)).all()
+    else:
+        collaborators = session.query(Collaborator).all()
     if not collaborators:
         raise ValueError("Il n'éxiste aucun collaborateurs.")
     liste = "\n".join(
