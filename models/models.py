@@ -29,7 +29,6 @@ class Collaborator(Base):
     date_creation = Column(DateTime, default=datetime.now)
 
     customers = relationship("Customer", back_populates="commercial", foreign_keys="Customer.commercial_id")
-    contracts = relationship("Contract", back_populates="commercial", foreign_keys="Contract.commercial_id")
     events_support = relationship("Event", back_populates="support", foreign_keys="Event.support_id")
     role = relationship("Role", back_populates="collaborators")
 
@@ -49,7 +48,6 @@ class Customer(Base):
 
     commercial = relationship("Collaborator", back_populates="customers")
     contracts = relationship("Contract", back_populates="customer")
-    events = relationship("Event", back_populates="customer")
 
 
 # table des Contracts
@@ -58,15 +56,12 @@ class Contract(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     customer_id = Column(Integer, ForeignKey("customer.id"))
-    commercial_id = Column(Integer, ForeignKey("collaborator.id"))
     total_amount = Column(Float)
     amount_to_pay = Column(Float)
     date_creation = Column(DateTime, default=datetime.now)
     signed = Column(Boolean)
 
     customer = relationship("Customer", back_populates="contracts")
-    commercial = relationship("Collaborator", back_populates="contracts",
-                              foreign_keys="Contract.commercial_id")
     event = relationship("Event", back_populates="contract", uselist=False)
 
 
@@ -77,7 +72,6 @@ class Event(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
     contract_id = Column(Integer, ForeignKey("contract.id"))
-    customer_id = Column(Integer, ForeignKey("customer.id"))
     support_id = Column(Integer, ForeignKey("collaborator.id"))
     date_start = Column(DateTime)
     date_end = Column(DateTime)
@@ -86,5 +80,4 @@ class Event(Base):
     notes = Column(String(1000))
 
     contract = relationship("Contract", back_populates="event")
-    customer = relationship("Customer", back_populates="events")
     support = relationship("Collaborator", back_populates="events_support", foreign_keys="Event.support_id")

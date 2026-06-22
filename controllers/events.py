@@ -27,7 +27,6 @@ def create_event(token, name, contract_id, date_start, date_end, location, atten
 
     event = Event(name=name,
                   contract_id=int(contract_id),
-                  customer_id=int(contract.customer_id),
                   date_start=date_start,
                   date_end=date_end,
                   location=location,
@@ -93,7 +92,6 @@ def display_event(token, event_id):
 
 
 def get_events(support_id=None, filter_by_support=False, filter_by_empty_support=False):
-    # gestion ajout de filtres (pas de support associé : gestion) (du support connecté)
     query = session.query(Event)
     if filter_by_support and support_id:
         query = query.filter(Event.support_id == support_id)

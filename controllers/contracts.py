@@ -7,10 +7,9 @@ from validators import validate_amount_to_pay
 
 
 @require_role("gestion")
-def create_contract(token, customer_id, commercial_id, total_amount, amount_to_pay, signed):
+def create_contract(token, customer_id, total_amount, amount_to_pay, signed):
     validate_amount_to_pay(amount_to_pay, total_amount)
     contract = Contract(customer_id=int(customer_id),
-                        commercial_id=int(commercial_id),
                         total_amount=float(total_amount),
                         amount_to_pay=float(amount_to_pay),
                         signed=signed
@@ -21,7 +20,7 @@ def create_contract(token, customer_id, commercial_id, total_amount, amount_to_p
 
 
 @require_role("gestion", "commercial")
-def update_contract(token, contract_id, customer_id, commercial_id, total_amount, amount_to_pay, signed):
+def update_contract(token, contract_id, customer_id, total_amount, amount_to_pay, signed):
     payload = decode_token(token)
     collaborator_role = payload.get("role")
     collaborator_id = payload.get("id")
@@ -37,8 +36,6 @@ def update_contract(token, contract_id, customer_id, commercial_id, total_amount
 
     if customer_id:
         contract.customer_id = int(customer_id)
-    if commercial_id:
-        contract.commercial_id = int(commercial_id)
     if total_amount is not None:
         contract.total_amount = float(total_amount)
     if amount_to_pay is not None:
@@ -62,7 +59,7 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
                   filter_by_signed=False):
     query = session.query(Contract)
     if filter_by_commercial and commercial_id:
-        query = query.filter(Contract.commercial_id == commercial_id)
+        query = query.filter(Contract.customer.commercial_id == commercial_id)
     if filter_by_amount_to_pay:
         query = query.filter(Contract.amount_to_pay > 0)
     if filter_by_signed:
@@ -73,7 +70,7 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
     liste = "\n".join(
         f" id : {c.id} "
         f"\n client : {c.customer.name} (id : {c.customer_id})"
-        f"\n commercial : {c.commercial.name} (id : {c.commercial_id})" for c in contracts)
+        f"\n commercial : {c.customer.commercial.name} (id : {c.customer.commercial_id})" for c in contracts)
     valid_ids = [str(c.id) for c in contracts]
     return liste, valid_ids
 

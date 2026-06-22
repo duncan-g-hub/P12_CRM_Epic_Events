@@ -26,7 +26,7 @@ def view_display_customer(c):
           f"\n nom : {c.name} (id : {c.id}) "
           f"\n email : {c.email} - téléphone : {c.phone}"
           f"\n entreprise : {c.company_name} "
-          f"\n commercial : {c.commercial.name} (id : {c.commercial_id})"
+          f"\n commercial : {c.customer.commercial.name} (id : {c.customer.commercial_id})"
           "\n----------------------------------\n")
 
 
@@ -36,7 +36,8 @@ def view_display_event(e):
           f"Événement sélectionné : "
           f"\n id : {e.id} - nom : {e.name}"
           f"\n support : {support_name} (id : {e.support_id})"
-          f"\n client : {e.customer.name} (id : {e.customer_id})"
+          f"\n client : {e.contract.customer.name} (id : {e.contract.customer_id} - "
+          f"email : {e.contract.customer.email} - tel : {e.contract.customer.phone})"
           f"\n contrat id : {e.contract_id}"
           f"\n date de début : {e.date_start} - date de fin : {e.date_end}"
           f"\n adresse : {e.location}"

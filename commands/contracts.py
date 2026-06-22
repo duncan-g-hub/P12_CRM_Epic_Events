@@ -27,13 +27,6 @@ def create(ctx):
         return
     customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\n"
                                "N° id du client", type=click.Choice(customer_ids))
-    try:
-        commercials, commercial_ids = get_commercials()
-    except ValueError as e:
-        click.echo(click.style(str(e), fg="red"))
-        return
-    commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\n"
-                                 "N° id du commercial", type=click.Choice(commercial_ids))
 
     total_amount = click.prompt("Montant total €", type=float)
 
@@ -43,7 +36,7 @@ def create(ctx):
     signed = click.prompt("Contrat signé ?", type=click.BOOL)
 
     try:
-        contract = create_contract(token, customer_id, commercial_id, total_amount, amount_to_pay, signed)
+        contract = create_contract(token, customer_id, total_amount, amount_to_pay, signed)
         click.echo(click.style(f"Contrat pour le client {contract.customer.name} créé.", fg="green"))
 
     except PermissionError as e:
@@ -56,6 +49,7 @@ def create(ctx):
 def update(ctx):
     token = ctx.obj["token"]
     click.echo("Modification d'un contrat:\n")
+
     try:
         contracts, contract_ids = get_contracts()
     except ValueError as e:
@@ -74,15 +68,6 @@ def update(ctx):
                                "N° id du nouveau client (Entrée pour ignorer)",
                                default="", show_default=False, type=click.Choice(customer_ids)) or None
 
-    try:
-        commercials, commercial_ids = get_commercials()
-    except ValueError as e:
-        click.echo(click.style(str(e), fg="red"))
-        return
-    commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\n"
-                                 "N° id du nouveau commercial (Entrée pour ignorer)",
-                                 default="", show_default=False, type=click.Choice(commercial_ids)) or None
-
 
     total_amount = click.prompt("Nouveau montant total € (Entrée pour ignorer)",
                                 type=float, default="", show_default=False) or None
@@ -98,7 +83,7 @@ def update(ctx):
                           type=click.BOOL, default="", show_default=False) or None
 
     try:
-        contract = update_contract(token, contract_id, customer_id, commercial_id, total_amount, amount_to_pay, signed)
+        contract = update_contract(token, contract_id, customer_id, total_amount, amount_to_pay, signed)
         click.echo(click.style(f"Contrat pour le client {contract.customer.name} mis à jour.", fg="green"))
     except (PermissionError, ValueError) as e:
         click.echo(click.style(str(e), fg="red"))
