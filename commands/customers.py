@@ -3,6 +3,8 @@ from controllers.customers import create_customer, display_customer, get_custome
     update_customer_commercial
 from controllers.collaborators import get_commercials
 from auth.auth import decode_token
+from validators import validate_email, validate_phone
+from commands.utils import validate_prompt
 
 
 @click.group("customers")
@@ -19,8 +21,8 @@ def create(ctx):
     token = ctx.obj["token"]
     click.echo("Création d'un client:\n")
     name = click.prompt("Nom complet du client")
-    email = click.prompt("Adresse email")
-    phone = click.prompt("Numéro de téléphone")
+    email = validate_prompt("Adresse email", validate_email)
+    phone = validate_prompt("Numéro de téléphone", validate_phone)
     company_name = click.prompt("Nom de l'entreprise")
 
     commercials, commercial_ids = get_commercials()
@@ -49,10 +51,13 @@ def update(ctx):
     if collaborator_role == "commercial":
         name = click.prompt("Nouveau nom du client (Entrée pour ignorer)", default="", show_default=False
                             ).strip() or None
-        email = click.prompt("Adresse email (Entrée pour ignorer)", default="", show_default=False
-                             ).strip() or None
-        phone = click.prompt("Numéro de téléphone (Entrée pour ignorer)", default="", show_default=False
-                             ).strip() or None
+
+        email = validate_prompt("Adresse email (Entrée pour ignorer)", validate_email, optional=True,
+                                default="", show_default=False)
+
+        phone = validate_prompt("Numéro de téléphone (Entrée pour ignorer)", validate_phone, optional=True,
+                                default="", show_default=False)
+
         company_name = click.prompt("Nom de l'entreprise (Entrée pour ignorer)", default="", show_default=False
                                     ).strip() or None
         try:

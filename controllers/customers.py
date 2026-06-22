@@ -3,10 +3,12 @@ from database import session
 from auth.permissions import require_role
 from views.views import view_display_customer
 from auth.auth import decode_token
-
+from validators import validate_email, validate_phone
 
 @require_role("commercial")
 def create_customer(token, name, email, phone, company_name, commercial_id):
+    validate_email(email)
+    validate_phone(phone)
     customer = Customer(name=name,
                         email=email,
                         phone=phone,
@@ -28,12 +30,13 @@ def update_customer(token, customer_id, name, email, phone, company_name):
 
     if customer.commercial_id != collaborator_id:
         raise PermissionError("Vous ne pouvez modifier que les clients dont vous êtes responsable.")
-
     if name:
         customer.name = name
     if email:
+        validate_email(email)
         customer.email = email
     if phone:
+        validate_phone(phone)
         customer.phone = phone
     if company_name:
         customer.company_name = company_name
