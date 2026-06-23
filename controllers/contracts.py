@@ -43,6 +43,8 @@ def update_contract(token, contract_id, customer_id, total_amount, amount_to_pay
         validate_amount_to_pay(amount_to_pay, total_amount_reference)
         contract.amount_to_pay = float(amount_to_pay)
     if signed is not None:
+        if contract.signed and not signed:
+            raise ValueError("Un contrat déjà signé ne peut pas être repassé à non signé.")
         contract.signed = signed
 
     session.commit()
