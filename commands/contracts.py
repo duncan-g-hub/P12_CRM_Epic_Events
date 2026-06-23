@@ -30,7 +30,7 @@ def create(ctx):
     total_amount = click.prompt("Montant total €", type=float)
 
     validate_fn = partial(validate_amount_to_pay, total_amount=total_amount)
-    amount_to_pay = validate_prompt("Reste à payer €", validate_fn, type=float)
+    amount_to_pay = validate_prompt("Reste à payer €", validate_fn)
 
     signed = click.prompt("Contrat signé ?", type=click.BOOL)
 
