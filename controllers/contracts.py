@@ -61,7 +61,7 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
                   filter_by_signed=False):
     query = session.query(Contract)
     if filter_by_commercial and commercial_id:
-        query = query.filter(Contract.customer.commercial_id == commercial_id)
+        query = query.join(Contract.customer).filter(Customer.commercial_id == commercial_id)
     if filter_by_amount_to_pay:
         query = query.filter(Contract.amount_to_pay > 0)
     if filter_by_signed:
