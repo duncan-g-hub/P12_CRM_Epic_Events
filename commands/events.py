@@ -79,7 +79,7 @@ def update(ctx):
         except ValueError as e:
             click.echo(click.style(str(e), fg="red"))
             return
-        contract_id = click.prompt(f"\nListe des contrts :\n{contracts}\n\n"
+        contract_id = click.prompt(f"\nListe des contrats :\n{contracts}\n\n"
                                    "N° id du contrat (Entrée pour ignorer)", default="", show_default=False,
                                    type=click.Choice([*contract_ids, ""])) or None
 
