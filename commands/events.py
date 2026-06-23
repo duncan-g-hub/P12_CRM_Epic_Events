@@ -34,11 +34,9 @@ def create(ctx):
     contract_id = click.prompt(f"\nContrats disponibles :\n{contracts}\n\n"
                                "N° id du contrat", type=click.Choice(contract_ids))
 
-    date_start = validate_prompt("Date de départ (JJ/MM/AAAA)",validate_future_date,
-                                 type=click.DateTime(formats=["%d/%m/%Y"]))
+    date_start = validate_prompt("Date de départ (JJ/MM/AAAA)",validate_future_date)
     validate_fn = partial(validate_date_end, date_start)
-    date_end = validate_prompt("Date de fin (JJ/MM/AAAA)", validate_fn,
-                               type=click.DateTime(formats=["%d/%m/%Y"]))
+    date_end = validate_prompt("Date de fin (JJ/MM/AAAA)", validate_fn)
 
     location = click.prompt("Adresse")
     attendees = click.prompt("Nombre de participants", type=int)
