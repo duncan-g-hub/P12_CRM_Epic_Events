@@ -56,8 +56,11 @@ cli.add_command(events_group)
 
 if __name__ == "__main__":
     try:
-        cli()
-        # cli(standalone_mode=False)
+        cli(standalone_mode=False)
+    except click.exceptions.Abort:
+        pass
+    except click.exceptions.Exit:
+        pass
     except PermissionError as e:
         click.echo(click.style(str(e), fg="red"))
         if "expiré" in str(e):
@@ -66,7 +69,4 @@ if __name__ == "__main__":
     except Exception as e:
         sentry_sdk.capture_exception(e)  # toute erreur inattendue -> Sentry
         click.echo(click.style("Une erreur inattendue est survenue.", fg="red"))
-    except click.exceptions.Abort:
-        pass
-    except click.exceptions.Exit:
-        pass
+
