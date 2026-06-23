@@ -12,12 +12,14 @@ def validate_date(date):
 
 
 def validate_future_date(date):
+    date = validate_date(date)
     if date < datetime.now():
         raise ValueError("La date ne peut pas être dans le passé")
     return date
 
 
 def validate_date_end(date_start, date_end):
+    date_end = validate_date(date_end)
     if date_start > date_end:
         raise ValueError("La date de fin ne peut pas etre antérieur à la date de départ")
     return date_end
@@ -46,6 +48,23 @@ def validate_password(password):
 
 
 def validate_amount_to_pay(amount, total_amount):
+    amount = validate_float(amount)
     if amount > total_amount:
         raise ValueError("Le montant restant à payer ne peut pas être supérieur au montant total.")
     return amount
+
+
+def validate_float(value):
+    try:
+        return float(value)
+    except ValueError:
+        raise ValueError("Format de valeur invalide (ex: 3.14)")
+
+
+def validate_integer(value):
+    try:
+        return int(value)
+    except ValueError:
+        raise ValueError("Format de valeur invalide (ex: 31)")
+
+

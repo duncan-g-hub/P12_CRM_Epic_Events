@@ -77,7 +77,7 @@ def update(ctx):
             return
         commercial_id = click.prompt(f"\nCommerciaux disponibles :\n{commercials}\n\n"
                                      "N° id du nouveau commercial (Entrée pour ignorer)",
-                                     default="", show_default=False, type=click.Choice(commercial_ids)) or None
+                                     default="", show_default=False, type=click.Choice([*commercial_ids, ""])) or None
         try:
             customer = update_customer_commercial(token, customer_id, commercial_id)
             click.echo(click.style(f"Client '{customer.name}' mis à jour.", fg="green"))

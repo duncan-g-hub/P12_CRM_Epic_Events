@@ -2,10 +2,9 @@ import click
 from functools import partial
 from controllers.contracts import create_contract, get_contracts, display_contract, update_contract, get_contract
 from controllers.customers import get_customers
-from controllers.collaborators import get_commercials
 from auth.auth import decode_token
 from commands.utils import validate_prompt, require_cli_role
-from validators import validate_amount_to_pay
+from validators import validate_amount_to_pay, validate_float
 
 @click.group("contracts")
 def contracts_group():
@@ -66,21 +65,18 @@ def update(ctx):
         return
     customer_id = click.prompt(f"\nClients disponibles :\n{customers}\n\n"
                                "N° id du nouveau client (Entrée pour ignorer)",
-                               default="", show_default=False, type=click.Choice(customer_ids)) or None
+                               type=click.Choice([*customer_ids, ""]), default="", show_default=False) or None
 
-
-    total_amount = click.prompt("Nouveau montant total € (Entrée pour ignorer)",
-                                type=float, default="", show_default=False) or None
+    total_amount = validate_prompt("Nouveau montant total € (Entrée pour ignorer)", validate_float,
+                                   optional=True, default="", show_default=False)
 
     reference_total = total_amount if total_amount is not None else get_contract(contract_id).total_amount
     validate_fn = partial(validate_amount_to_pay, total_amount=reference_total)
     amount_to_pay = validate_prompt("Nouveau reste à payer € (Entrée pour ignorer)",
-                                    validate_fn, optional=True,
-                                    type=float, default="", show_default=False)
-
+                                    validate_fn, optional=True, default="", show_default=False)
 
     signed = click.prompt("Contrat signé ? (Entrée pour ignorer)",
-                          type=click.BOOL, default="", show_default=False) or None
+                          type=click.BOOL, default="", show_default=False)
 
     try:
         contract = update_contract(token, contract_id, customer_id, total_amount, amount_to_pay, signed)

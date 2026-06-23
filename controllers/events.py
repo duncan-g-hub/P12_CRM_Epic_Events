@@ -20,10 +20,8 @@ def create_event(token, name, contract_id, date_start, date_end, location, atten
     if not contract.signed:
         raise PermissionError("Vous ne pouvez pas créer un évennement sans que le contrat ne soit signé")
 
-
-    date_start = validate_future_date(validate_date(date_start))
-    date_end = validate_date(date_end)
-    validate_date_end(date_start, date_end)
+    date_start = validate_future_date(date_start)
+    date_end = validate_date_end(date_start, date_end)
 
     event = Event(name=name,
                   contract_id=int(contract_id),
@@ -59,12 +57,11 @@ def update_event(token, event_id, name, contract_id, date_start, date_end, locat
             raise PermissionError("Vous ne pouvez pas créer un évennement sans que le contrat ne soit signé")
         event.contract_id = int(contract_id)
     if date_start:
-        date_start = validate_future_date(validate_date(date_start))
+        date_start = validate_future_date(date_start)
         event.date_start = date_start
     if date_end:
-        date_end = validate_date(date_end)
         date_start_reference = date_start if date_start is not None else event.date_start
-        validate_date_end(date_start_reference, date_end)
+        date_end = validate_date_end(date_start_reference, date_end)
         event.date_end = date_end
     if location:
         event.location = location
