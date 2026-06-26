@@ -31,8 +31,9 @@ def create_collaborator(token, name, email, password, phone, role_id):
     session.add(collaborator)
     session.commit()
 
-    logging.info(f"[COLLABORATEUR CRÉÉ] id:{collaborator.id} - nom:{collaborator.name} - role_id:{collaborator.role.name}"
-                 f"[PAR COLLABORATEUR] id:{payload.get('id')}")
+    logging.info(
+        f"[COLLABORATEUR CRÉÉ] id:{collaborator.id} - nom:{collaborator.name} - role_id:{collaborator.role.name}"
+        f"[PAR COLLABORATEUR] id:{payload.get('id')}")
 
     return collaborator
 
