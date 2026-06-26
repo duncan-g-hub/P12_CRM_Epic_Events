@@ -65,7 +65,7 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
     if filter_by_amount_to_pay:
         query = query.filter(Contract.amount_to_pay > 0)
     if filter_by_signed:
-        query = query.filter(Contract.signed.is_False)
+        query = query.filter(Contract.signed.is_(False))
     contracts = query.all()
     if not contracts:
         raise ValueError("Contrats introuvables.")
