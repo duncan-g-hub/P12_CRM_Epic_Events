@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-engine = create_engine(os.getenv("DB_URL"), echo=True)
+engine = create_engine(os.getenv("DB_URL"), echo=False)
 
 Session = sessionmaker(bind=engine)
 session = Session()
