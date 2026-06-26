@@ -8,7 +8,7 @@ def save_token(token):
     TOKEN_FILE.write_text(token)
 
 
-def load_token() :
+def load_token():
     """Load JWT token from local file. Returns None if not found."""
     if not TOKEN_FILE.exists():
         return None
