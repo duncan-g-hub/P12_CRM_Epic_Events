@@ -1,3 +1,5 @@
+import logging
+
 from models.models import Contract, Customer
 from database import session
 from views.views import view_display_contract
@@ -45,6 +47,11 @@ def update_contract(token, contract_id, customer_id, total_amount, amount_to_pay
     if signed is not None:
         if contract.signed and not signed:
             raise ValueError("Un contrat déjà signé ne peut pas être repassé à non signé.")
+        if signed and not contract.signed:
+            logging.info(
+                f"[CONTRAT SIGNÉ] contrat id:{contract.id} - client:{contract.customer.name}"
+                f"[PAR COLLABORATEUR] id:{payload.get('id')}"
+            )
         contract.signed = signed
 
     session.commit()

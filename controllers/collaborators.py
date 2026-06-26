@@ -1,5 +1,7 @@
 import bcrypt
+import logging
 
+from auth.auth import decode_token
 from models.models import Collaborator, Role
 from database import session
 from auth.permissions import require_role
@@ -12,6 +14,7 @@ def create_collaborator(token, name, email, password, phone, role_id):
     validate_email(email)
     validate_password(password)
     validate_phone(phone)
+    payload = decode_token(token)
 
     # hachage du mdp :
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
@@ -27,11 +30,16 @@ def create_collaborator(token, name, email, password, phone, role_id):
 
     session.add(collaborator)
     session.commit()
+
+    logging.info(f"[COLLABORATEUR CRÉÉ] id:{collaborator.id} - nom:{collaborator.name} - role_id:{collaborator.role.name}"
+                 f"[PAR COLLABORATEUR] id:{payload.get('id')}")
+
     return collaborator
 
 
 @require_role("gestion")
 def update_collaborator(token, collaborator_id, name, email, password, phone, role_id):
+    payload = decode_token(token)
     collaborator = session.query(Collaborator).filter(Collaborator.id == collaborator_id).first()
     if not collaborator:
         raise ValueError("Collaborateur introuvable.")
@@ -59,6 +67,11 @@ def update_collaborator(token, collaborator_id, name, email, password, phone, ro
         collaborator.role_id = int(role_id)
 
     session.commit()
+
+    logging.info(
+        f"[COLLABORATEUR MODIFIÉ] id:{collaborator.id} - nom:{collaborator.name} - role_id:{collaborator.role.name}"
+        f"[PAR COLLABORATEUR] id:{payload.get('id')}")
+
     return collaborator
 
 

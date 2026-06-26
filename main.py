@@ -1,6 +1,8 @@
 import click
 import os
 from dotenv import load_dotenv
+import sentry_sdk
+import logging
 
 from database import engine, session
 from models.models import Base, Role
@@ -10,7 +12,7 @@ from commands.customers import customers_group
 from commands.contracts import contracts_group
 from commands.events import events_group
 from token_storage import load_token, delete_token
-import sentry_sdk
+
 
 load_dotenv()
 sentry_sdk.init(
@@ -68,4 +70,5 @@ if __name__ == "__main__":
             click.echo(click.style("Veuillez vous reconnecter.", fg="yellow"))
     except Exception as e:
         sentry_sdk.capture_exception(e)  # toute erreur inattendue -> Sentry
+        logging.error(f"Une erreur est survenue : {e}")
         click.echo(click.style("Une erreur inattendue est survenue.", fg="red"))
