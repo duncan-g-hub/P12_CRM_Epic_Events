@@ -11,7 +11,7 @@ from commands.utils import validate_prompt, require_cli_role
 
 @click.group("events")
 def events_group():
-    """Gestion des événements"""
+    """Manage events."""
     pass
 
 
@@ -19,7 +19,7 @@ def events_group():
 @click.pass_context
 @require_cli_role("commercial")
 def create(ctx):
-    """Créer un événement"""
+    """Crate a new event (commercial only)."""
     token = ctx.obj["token"]
     payload = decode_token(token)
     collaborator_id = payload.get("id")
@@ -55,6 +55,7 @@ def create(ctx):
 @click.pass_context
 @require_cli_role("gestion", "support")
 def update(ctx):
+    """Update an exsiting event (gestion and support only)."""
     token = ctx.obj["token"]
     payload = decode_token(token)
     collaborator_role = payload.get("role")
@@ -129,6 +130,7 @@ def update(ctx):
 @click.pass_context
 @require_cli_role("commercial", "gestion", "support")
 def display(ctx):
+    """Display event details."""
     token = ctx.obj["token"]
 
     support_id = None

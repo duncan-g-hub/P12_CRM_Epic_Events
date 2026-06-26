@@ -11,6 +11,11 @@ from validators import validate_email, validate_password, validate_phone
 
 @require_role("gestion")
 def create_collaborator(token, name, email, password, phone, role_id):
+    """Create and save a new collaborator to the database (gestion only).
+
+    Raises:
+            ValueError: If email already in use.
+    """
     validate_email(email)
     validate_password(password)
     validate_phone(phone)
@@ -40,6 +45,11 @@ def create_collaborator(token, name, email, password, phone, role_id):
 
 @require_role("gestion")
 def update_collaborator(token, collaborator_id, name, email, password, phone, role_id):
+    """Update an existing collaborator's fields (gestion only).
+
+    Raises:
+        ValueError: If collaborator not found or email already in use.
+    """
     payload = decode_token(token)
     collaborator = session.query(Collaborator).filter(Collaborator.id == collaborator_id).first()
     if not collaborator:
@@ -78,11 +88,17 @@ def update_collaborator(token, collaborator_id, name, email, password, phone, ro
 
 @require_role("gestion", "commercial", "support")
 def display_collaborator(token, collaborator_id):
+    """Display collaborator details."""
     collaborator = session.get(Collaborator, collaborator_id)
     view_display_collaborator(collaborator, collaborator.role.name)
 
 
 def get_commercials():
+    """Return a formatted list and id list of all commercials.
+
+    Raises:
+        ValueError: If no commercials found.
+    """
     commercials = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "commercial").all()
     if not commercials:
         raise ValueError("Il n'éxiste aucun commercial.")
@@ -93,6 +109,11 @@ def get_commercials():
 
 
 def get_supports():
+    """Return a formatted list and id list of all supports.
+
+    Raises:
+        ValueError: If no supports found.
+    """
     supports = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "support").all()
     if not supports:
         raise ValueError("Il n'éxiste aucun support.")
@@ -103,6 +124,11 @@ def get_supports():
 
 
 def get_collaborators(filter_by_role=False):
+    """Return a formatted list and id list of all collaborators, optionally filtered by role.
+
+    Raises:
+        ValueError: If no collaborators found.
+    """
     if filter_by_role:
         collaborators = session.query(Collaborator).filter(Collaborator.role_id == int(filter_by_role)).all()
     else:

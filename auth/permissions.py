@@ -6,8 +6,12 @@ from auth.auth import decode_token
 # une fonction qui retourne un décorateur, qui retourne une fonction.
 # Trois niveaux d'imbrication car on a besoin de passer des paramètres (allowed_roles).
 def require_role(*allowed_roles):  # capture tous les rôles passés en argument dans un tuple
-    """Décorateur qui vérifie le rôle avant d'exécuter le contrôleur."""
+    """
+    Decorator that restricts access to specified roles.
 
+    Raises:
+        PermissionError: If the token role is not in allowed_roles.
+    """
     def decorator(func):  # func c'est la fonction décorée
         @functools.wraps(func)  # permet de conserver le nom et docstring de la fonction originale
         # *args, **kwargs transmettent tous les arguments éventuels à la vraie fonction sans les modifier.

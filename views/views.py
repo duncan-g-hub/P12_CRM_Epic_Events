@@ -1,6 +1,5 @@
-# afficher plutot les nom que les ids
-
 def view_display_collaborator(c, c_role):
+    """Print collaborator details."""
     print("\n----------------------------------\n"
           f"Collaborateur sélectionné : "
           f"\n nom : {c.name} (id : {c.id}) "
@@ -10,6 +9,7 @@ def view_display_collaborator(c, c_role):
 
 
 def view_display_contract(c):
+    """Print contract details."""
     signed = "Oui" if c.signed else "Non"
     print("\n----------------------------------\n"
           f"Contrat sélectionné : "
@@ -21,6 +21,7 @@ def view_display_contract(c):
 
 
 def view_display_customer(c):
+    """Print customer details."""
     print("\n----------------------------------\n"
           f"Client sélectionné : "
           f"\n nom : {c.name} (id : {c.id}) "
@@ -31,6 +32,7 @@ def view_display_customer(c):
 
 
 def view_display_event(e):
+    """Print event details."""
     support_name = e.support.name if e.support else "Aucun"
     print("\n----------------------------------\n"
           f"Événement sélectionné : "

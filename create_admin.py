@@ -1,3 +1,8 @@
+"""
+One-time script to create the default admin collaborator.
+Run once after initial database setup.
+"""
+
 import bcrypt
 from database import session
 from models.models import Collaborator, Role

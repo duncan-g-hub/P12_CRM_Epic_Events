@@ -5,7 +5,11 @@ from auth.auth import decode_token
 
 
 def validate_prompt(prompt, validate_function, optional=False, **kwargs):
-    """Redemande le champ tant qu'il est invalide."""
+    """
+    Prompt user for input and re-ask until valid.
+
+    Returns None if optional and input is empty.
+    """
     while True:
         value = click.prompt(prompt, **kwargs)
 
@@ -22,7 +26,12 @@ def validate_prompt(prompt, validate_function, optional=False, **kwargs):
 
 
 def require_cli_role(*allowed_roles):
-    """Vérifie le rôle avant d'entrer dans la commande."""
+    """
+    CLI decorator that restricts command access to specified roles.
+
+    Raises:
+        PermissionError: If the token role is not in allowed_roles.
+    """
 
     def decorator(func):
         @functools.wraps(func)

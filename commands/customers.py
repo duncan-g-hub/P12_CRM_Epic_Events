@@ -9,7 +9,7 @@ from commands.utils import validate_prompt, require_cli_role
 
 @click.group("customers")
 def customers_group():
-    """Gestion des clients"""
+    """Manage customers."""
     pass
 
 
@@ -17,7 +17,7 @@ def customers_group():
 @click.pass_context
 @require_cli_role("commercial")
 def create(ctx):
-    """Créer un client"""
+    """Create a new customer (commercial only)."""
 
     token = ctx.obj["token"]
     click.echo("Création d'un client:\n")
@@ -39,7 +39,7 @@ def create(ctx):
 @click.pass_context
 @require_cli_role("commercial", "gestion")
 def update(ctx):
-    """Modifier un client"""
+    """Update an existing customer (commercial and gestion only)."""
     token = ctx.obj["token"]
     payload = decode_token(token)
     collaborator_role = payload.get("role")
@@ -90,6 +90,7 @@ def update(ctx):
 @click.pass_context
 @require_cli_role("commercial", "gestion", "support")
 def display(ctx):
+    """Display customer details."""
     token = ctx.obj["token"]
     click.echo("Affichage des détails d'un client:\n")
     try:

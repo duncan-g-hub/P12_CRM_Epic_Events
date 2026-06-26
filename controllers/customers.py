@@ -8,6 +8,11 @@ from validators import validate_email, validate_phone
 
 @require_role("commercial")
 def create_customer(token, name, email, phone, company_name, commercial_id):
+    """Create and save a new customer to the database (commercial only).
+
+    Raises:
+        ValueError: If email already in use.
+    """
     validate_email(email)
     validate_phone(phone)
     existing = session.query(Customer).filter(Customer.email == email).first()
@@ -28,6 +33,13 @@ def create_customer(token, name, email, phone, company_name, commercial_id):
 
 @require_role("commercial")
 def update_customer(token, customer_id, name, email, phone, company_name):
+    """Update an existing customer's fields (commercial only).
+
+    Raises:
+        ValueError: If customer not found.
+        PermissionError: If commercial tries to update another commercial's customer.
+    """
+
     payload = decode_token(token)
     collaborator_id = payload.get("id")
 
@@ -54,6 +66,11 @@ def update_customer(token, customer_id, name, email, phone, company_name):
 
 @require_role("gestion")
 def update_customer_commercial(token, customer_id, commercial_id):
+    """Assign a new commercial to a customer (gestion only).
+
+    Raises:
+        ValueError: If customer not found.
+    """
     customer = session.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:
         raise ValueError("Client introuvable.")
@@ -67,11 +84,17 @@ def update_customer_commercial(token, customer_id, commercial_id):
 
 @require_role("gestion", "commercial", "support")
 def display_customer(token, customer_id):
+    """Display customer details."""
     customer = session.get(Customer, customer_id)
     view_display_customer(customer)
 
 
 def get_customers():
+    """Return a formatted list and id list of all customers.
+
+    Raises:
+        ValueError: If no customers found.
+    """
     customers = session.query(Customer).all()
     if not customers:
         raise ValueError("Clients introuvables.")

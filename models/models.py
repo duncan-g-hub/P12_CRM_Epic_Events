@@ -4,11 +4,12 @@ from datetime import datetime
 
 
 class Base(DeclarativeBase):
+    """Base class for all SQLAlchemy models."""
     pass
 
 
-# table des Roles
 class Role(Base):
+    """Represents a collaborator role (commercial, support, gestion)."""
     __tablename__ = "role"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False, unique=True)  # "commercial", "support", "gestion"
@@ -16,8 +17,8 @@ class Role(Base):
     collaborators = relationship("Collaborator", back_populates="role")
 
 
-# table des Collaborators
 class Collaborator(Base):
+    """Represents a CRM collaborator."""
     __tablename__ = "collaborator"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -33,8 +34,8 @@ class Collaborator(Base):
     role = relationship("Role", back_populates="collaborators")
 
 
-# table des Customers
 class Customer(Base):
+    """Represents a customer managed by a commercial."""
     __tablename__ = "customer"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -50,8 +51,8 @@ class Customer(Base):
     contracts = relationship("Contract", back_populates="customer")
 
 
-# table des Contracts
 class Contract(Base):
+    """Represents a contract linked to a customer."""
     __tablename__ = "contract"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -65,8 +66,8 @@ class Contract(Base):
     event = relationship("Event", back_populates="contract", uselist=False)
 
 
-# table des évenements
 class Event(Base):
+    """Represents an event linked to a contract."""
     __tablename__ = "event"
 
     id = Column(Integer, primary_key=True, autoincrement=True)

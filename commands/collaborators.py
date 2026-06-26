@@ -6,7 +6,7 @@ from validators import validate_email, validate_phone, validate_password
 
 @click.group("collaborators")
 def collaborators_group():
-    """Gestion des collaborateurs"""
+    """Manage collaborators."""
     pass
 
 
@@ -14,7 +14,7 @@ def collaborators_group():
 @click.pass_context
 @require_cli_role("gestion")
 def create(ctx, ):
-    """Créer un collaborateur (gestion uniquement)"""
+    """Create a new collaborator (gestion only)."""
     token = ctx.obj["token"]
     click.echo("Création d'un collaborateur:\n")
     name = click.prompt("Nom complet du collaborateur")
@@ -43,6 +43,7 @@ def create(ctx, ):
 @click.pass_context
 @require_cli_role("gestion")
 def update(ctx):
+    """Update an existing collaborator (gestion only)."""
     token = ctx.obj["token"]
     click.echo("Modification d'un collaborateur:\n")
     try:
@@ -86,6 +87,7 @@ def update(ctx):
 @click.pass_context
 @require_cli_role("commercial", "gestion", "support")
 def display(ctx):
+    """Display collaborator details."""
     token = ctx.obj["token"]
     click.echo("Affichage des détails d'un collaborateur:\n")
 

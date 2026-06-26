@@ -8,7 +8,7 @@ from token_storage import save_token, delete_token
 @click.command("login")
 @click.pass_context
 def login_command(ctx):
-    """Se connecter au CRM"""
+    """Log in to the CRM."""
     click.echo("Connexion:\n")
     email = click.prompt("Adresse email")
     password = click.prompt("Mot de passe", hide_input=True)
@@ -33,5 +33,6 @@ def login_command(ctx):
 
 @click.command("logout")
 def logout_command():
+    """Log out of the CRM."""
     delete_token()
     click.echo("Déconnecté.")

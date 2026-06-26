@@ -13,7 +13,13 @@ ALGORITHM = "HS256"
 TOKEN_EXPIRATION_HOURS = 8
 
 
-def login(email: str, password: str) -> str | None:
+def login(email, password):
+    """
+    Authenticate a collaborator and return a JWT token.
+
+    Raises:
+        ValueError: If email not found or password is incorrect.
+    """
     collaborator = session.query(Collaborator).filter(Collaborator.email == email).first()
 
     if not collaborator:
@@ -35,6 +41,12 @@ def login(email: str, password: str) -> str | None:
 
 
 def decode_token(token: str) -> dict:
+    """
+    Decode and validate a JWT token.
+
+    Raises:
+        PermissionError: If token is expired or invalid.
+    """
     try:
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.ExpiredSignatureError:

@@ -1,3 +1,5 @@
+"""Entry point of the Epic Events CRM application."""
+
 import click
 import os
 from dotenv import load_dotenv

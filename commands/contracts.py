@@ -9,7 +9,7 @@ from validators import validate_amount_to_pay, validate_float
 
 @click.group("contracts")
 def contracts_group():
-    """Gestion des contrats"""
+    """Manage contracts."""
     pass
 
 
@@ -17,7 +17,7 @@ def contracts_group():
 @click.pass_context
 @require_cli_role("gestion")
 def create(ctx):
-    """Créer un contrat"""
+    """Create a new contract (gestion only)."""
     token = ctx.obj["token"]
     click.echo("Création d'un contrat:\n")
     try:
@@ -47,6 +47,7 @@ def create(ctx):
 @click.pass_context
 @require_cli_role("commercial", "gestion")
 def update(ctx):
+    """Update an existing contract (gestion and commercial only)."""
     token = ctx.obj["token"]
     click.echo("Modification d'un contrat:\n")
 
@@ -90,6 +91,7 @@ def update(ctx):
 @click.pass_context
 @require_cli_role("commercial", "gestion", "support")
 def display(ctx):
+    """Display contracts details."""
     token = ctx.obj["token"]
     click.echo("Affichage des détails d'un contrat:\n")
     commercial_id = None

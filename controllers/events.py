@@ -8,6 +8,11 @@ from validators import validate_future_date, validate_date_end
 
 @require_role("commercial")
 def create_event(token, name, contract_id, date_start, date_end, location, attendees, notes):
+    """Create and save a new event to the database (commercial only).
+
+    Raises:
+        PermissionError: If commercial is not responsible for the customer or contract is unsigned.
+    """
     payload = decode_token(token)
     collaborator_id = payload.get("id")
 
@@ -39,6 +44,12 @@ def create_event(token, name, contract_id, date_start, date_end, location, atten
 
 @require_role("support")
 def update_event(token, event_id, name, contract_id, date_start, date_end, location, attendees, notes):
+    """Update an existing event's fields (support only).
+
+    Raises:
+        ValueError: If event not found.
+        PermissionError: If support is not responsible for the event.
+    """
     payload = decode_token(token)
     collaborator_id = payload.get("id")
 
@@ -75,6 +86,11 @@ def update_event(token, event_id, name, contract_id, date_start, date_end, locat
 
 @require_role("gestion")
 def update_event_support(token, event_id, support_id):
+    """Assign a support collaborator to an event (gestion only).
+
+    Raises:
+        ValueError: If event not found.
+    """
     event = session.query(Event).filter(Event.id == event_id).first()
     if not event:
         raise ValueError("Événement introuvable.")
@@ -86,11 +102,17 @@ def update_event_support(token, event_id, support_id):
 
 @require_role("gestion", "commercial", "support")
 def display_event(token, event_id):
+    """Display event details."""
     event = session.get(Event, event_id)
     view_display_event(event)
 
 
 def get_events(support_id=None, filter_by_support=False, filter_by_empty_support=False):
+    """Return a formatted list and id list of events, with optional filters.
+
+    Raises:
+        ValueError: If no events found.
+    """
     query = session.query(Event)
     if filter_by_support and support_id:
         query = query.filter(Event.support_id == support_id)
@@ -109,5 +131,6 @@ def get_events(support_id=None, filter_by_support=False, filter_by_empty_support
 
 
 def get_event(event_id):
+    """Return a single event by id."""
     event = session.query(Event).filter(Event.id == event_id).first()
     return event
