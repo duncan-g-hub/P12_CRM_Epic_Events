@@ -40,8 +40,12 @@ if not session.query(Role).first():
 def cli(ctx):
     """Epic Events CRM"""
     ctx.ensure_object(dict)
-    ctx.obj["token"] = load_token()
-
+    token = load_token()
+    ctx.obj["token"] = token
+    if token:
+        from auth.auth import decode_token
+        payload = decode_token(token)
+        sentry_sdk.set_user({"id": payload.get("id"), "role": payload.get("role")})
 
 cli.add_command(login_command)
 cli.add_command(logout_command)
