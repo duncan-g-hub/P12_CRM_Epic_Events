@@ -16,6 +16,6 @@ def load_token() :
 
 
 def delete_token():
-
+    """Delete JWT token from local file."""
     if TOKEN_FILE.exists():
         TOKEN_FILE.unlink()
