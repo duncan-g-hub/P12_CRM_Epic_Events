@@ -10,12 +10,18 @@ from validators import validate_amount_to_pay
 
 @require_role("gestion")
 def create_contract(token, customer_id, total_amount, amount_to_pay, signed):
+    payload = decode_token(token)
     validate_amount_to_pay(amount_to_pay, total_amount)
     contract = Contract(customer_id=int(customer_id),
                         total_amount=float(total_amount),
                         amount_to_pay=float(amount_to_pay),
                         signed=signed
                         )
+    if contract.signed:
+        logging.info(
+            f"[CONTRAT SIGNÉ] contrat id:{contract.id} - client:{contract.customer.name} - "
+            f"[PAR COLLABORATEUR] id:{payload.get('id')}"
+        )
     session.add(contract)
     session.commit()
     return contract
@@ -49,7 +55,7 @@ def update_contract(token, contract_id, customer_id, total_amount, amount_to_pay
             raise ValueError("Un contrat déjà signé ne peut pas être repassé à non signé.")
         if signed and not contract.signed:
             logging.info(
-                f"[CONTRAT SIGNÉ] contrat id:{contract.id} - client:{contract.customer.name}"
+                f"[CONTRAT SIGNÉ] contrat id:{contract.id} - client:{contract.customer.name} - "
                 f"[PAR COLLABORATEUR] id:{payload.get('id')}"
             )
         contract.signed = signed

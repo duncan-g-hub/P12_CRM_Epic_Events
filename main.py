@@ -2,6 +2,7 @@ import click
 import os
 from dotenv import load_dotenv
 import sentry_sdk
+from sentry_sdk.integrations.logging import LoggingIntegration
 import logging
 
 from database import engine, session
@@ -13,8 +14,9 @@ from commands.contracts import contracts_group
 from commands.events import events_group
 from token_storage import load_token, delete_token
 
-
 load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
 sentry_sdk.init(
     dsn=os.getenv("SENTRY_DSN"),
     # Add data like request headers and IP for users,
@@ -22,6 +24,12 @@ sentry_sdk.init(
     send_default_pii=True,
     # Enable sending logs to Sentry
     enable_logs=True,
+    integrations=[
+        LoggingIntegration(
+            level=logging.INFO,
+            event_level=logging.ERROR
+        )
+    ]
 )
 
 # Base.metadata.drop_all(engine)   # supprime toutes les tables
@@ -48,6 +56,7 @@ def cli(ctx):
         from auth.auth import decode_token
         payload = decode_token(token)
         sentry_sdk.set_user({"id": payload.get("id"), "role": payload.get("role")})
+
 
 cli.add_command(login_command)
 cli.add_command(logout_command)

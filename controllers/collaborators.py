@@ -32,7 +32,7 @@ def create_collaborator(token, name, email, password, phone, role_id):
     session.commit()
 
     logging.info(
-        f"[COLLABORATEUR CRÉÉ] id:{collaborator.id} - nom:{collaborator.name} - role_id:{collaborator.role.name}"
+        f"[COLLABORATEUR CRÉÉ] id:{collaborator.id} - nom:{collaborator.name} - role_id:{collaborator.role.name} - "
         f"[PAR COLLABORATEUR] id:{payload.get('id')}")
 
     return collaborator
@@ -70,7 +70,7 @@ def update_collaborator(token, collaborator_id, name, email, password, phone, ro
     session.commit()
 
     logging.info(
-        f"[COLLABORATEUR MODIFIÉ] id:{collaborator.id} - nom:{collaborator.name} - role_id:{collaborator.role.name}"
+        f"[COLLABORATEUR MODIFIÉ] id:{collaborator.id} - nom:{collaborator.name} - role_id:{collaborator.role.name} - "
         f"[PAR COLLABORATEUR] id:{payload.get('id')}")
 
     return collaborator

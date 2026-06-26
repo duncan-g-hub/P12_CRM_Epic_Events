@@ -20,8 +20,6 @@ def login_command(ctx):
         # contexte utilisateur envoyé à Sentry
         sentry_sdk.set_user({
             "id": collaborator.id,
-            "email": collaborator.email,
-            "role": collaborator.role.name
         })
 
         click.echo(click.style(
