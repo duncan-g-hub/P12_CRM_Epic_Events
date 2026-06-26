@@ -34,7 +34,7 @@ def create(ctx):
     contract_id = click.prompt(f"\nContrats disponibles :\n{contracts}\n\n"
                                "N° id du contrat", type=click.Choice(contract_ids))
 
-    date_start = validate_prompt("Date de départ (JJ/MM/AAAA)",validate_future_date)
+    date_start = validate_prompt("Date de départ (JJ/MM/AAAA)", validate_future_date)
     validate_fn = partial(validate_date_end, date_start)
     date_end = validate_prompt("Date de fin (JJ/MM/AAAA)", validate_fn)
 
@@ -81,12 +81,11 @@ def update(ctx):
                                    "N° id du contrat (Entrée pour ignorer)", default="", show_default=False,
                                    type=click.Choice([*contract_ids, ""])) or None
 
-
         date_start = validate_prompt("Date de départ (JJ/MM/AAAA) (Entrée pour ignorer)", validate_future_date,
                                      optional=True, default="", show_default=False)
 
         reference_date_start = date_start if date_start else get_event(event_id).date_start
-        validate_fn = partial(validate_date_end,reference_date_start)
+        validate_fn = partial(validate_date_end, reference_date_start)
         date_end = validate_prompt("Date de fin (JJ/MM/AAAA) (Entrée pour ignorer)", validate_fn, optional=True,
                                    default="", show_default=False)
 
@@ -102,7 +101,6 @@ def update(ctx):
             click.echo(click.style(f"Événement '{event.name}' mis à jour.", fg="green"))
         except (PermissionError, ValueError) as e:
             click.echo(click.style(f"{e}", fg="red"))
-
 
     if collaborator_role == "gestion":
         try:

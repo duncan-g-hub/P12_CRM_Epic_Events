@@ -2,10 +2,8 @@ import click
 import os
 from dotenv import load_dotenv
 
-
-
 from database import engine, session
-from models.models import Base, Role, Collaborator, Customer, Contract, Event
+from models.models import Base, Role
 from commands.auth import login_command, logout_command
 from commands.collaborators import collaborators_group
 from commands.customers import customers_group
@@ -24,10 +22,8 @@ sentry_sdk.init(
     enable_logs=True,
 )
 
-
-
 # Base.metadata.drop_all(engine)   # supprime toutes les tables
-Base.metadata.create_all(engine)    # Créer les tables
+Base.metadata.create_all(engine)  # Créer les tables
 
 # Alimenter les rôles si la table est vide
 if not session.query(Role).first():
@@ -69,4 +65,3 @@ if __name__ == "__main__":
     except Exception as e:
         sentry_sdk.capture_exception(e)  # toute erreur inattendue -> Sentry
         click.echo(click.style("Une erreur inattendue est survenue.", fg="red"))
-

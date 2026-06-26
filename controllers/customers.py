@@ -5,6 +5,7 @@ from views.views import view_display_customer
 from auth.auth import decode_token
 from validators import validate_email, validate_phone
 
+
 @require_role("commercial")
 def create_customer(token, name, email, phone, company_name, commercial_id):
     validate_email(email)
@@ -32,7 +33,7 @@ def update_customer(token, customer_id, name, email, phone, company_name):
 
     customer = session.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:
-        raise ValueError(f"Client introuvable.")
+        raise ValueError("Client introuvable.")
 
     if customer.commercial_id != collaborator_id:
         raise PermissionError("Vous ne pouvez modifier que les clients dont vous êtes responsable.")
@@ -55,7 +56,7 @@ def update_customer(token, customer_id, name, email, phone, company_name):
 def update_customer_commercial(token, customer_id, commercial_id):
     customer = session.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:
-        raise ValueError(f"Client introuvable.")
+        raise ValueError("Client introuvable.")
 
     if commercial_id:
         customer.commercial_id = commercial_id

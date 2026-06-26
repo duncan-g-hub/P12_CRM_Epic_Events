@@ -6,6 +6,7 @@ from auth.auth import decode_token
 from commands.utils import validate_prompt, require_cli_role
 from validators import validate_amount_to_pay, validate_float
 
+
 @click.group("contracts")
 def contracts_group():
     """Gestion des contrats"""
@@ -117,7 +118,7 @@ def display(ctx):
 
     try:
         contracts, contract_ids = get_contracts(commercial_id, filter_by_commercial, filter_by_amount_to_pay,
-                                            filter_by_signed)
+                                                filter_by_signed)
     except ValueError as e:
         click.echo(click.style(str(e), fg="red"))
         return

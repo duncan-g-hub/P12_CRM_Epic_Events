@@ -3,6 +3,7 @@ from controllers.collaborators import create_collaborator, get_collaborators, di
 from commands.utils import validate_prompt, require_cli_role
 from validators import validate_email, validate_phone, validate_password
 
+
 @click.group("collaborators")
 def collaborators_group():
     """Gestion des collaborateurs"""
@@ -90,7 +91,7 @@ def display(ctx):
 
     filter_by_role = click.prompt(
         "Voulez-vous filtrer les collaborateurs par rôles (1:commercial / 2:support / 3:gestion) ? "
-        "(Entrée pour ignorer)", type = click.Choice(["", "1", "2", "3"]), default="", show_default=False) or None
+        "(Entrée pour ignorer)", type=click.Choice(["", "1", "2", "3"]), default="", show_default=False) or None
 
     try:
         collaborators, collaborator_ids = get_collaborators(filter_by_role)

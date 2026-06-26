@@ -6,6 +6,7 @@ from auth.auth import decode_token
 from validators import validate_email, validate_phone
 from commands.utils import validate_prompt, require_cli_role
 
+
 @click.group("customers")
 def customers_group():
     """Gestion des clients"""

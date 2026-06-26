@@ -3,7 +3,7 @@ from database import session
 from auth.permissions import require_role
 from views.views import view_display_event
 from auth.auth import decode_token
-from validators import validate_date, validate_future_date, validate_date_end
+from validators import validate_future_date, validate_date_end
 
 
 @require_role("commercial")

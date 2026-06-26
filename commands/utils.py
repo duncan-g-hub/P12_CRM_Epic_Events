@@ -3,6 +3,7 @@ import functools
 
 from auth.auth import decode_token
 
+
 def validate_prompt(prompt, validate_function, optional=False, **kwargs):
     """Redemande le champ tant qu'il est invalide."""
     while True:
@@ -20,9 +21,9 @@ def validate_prompt(prompt, validate_function, optional=False, **kwargs):
             click.echo(click.style(f"{e}", fg="red"))
 
 
-
 def require_cli_role(*allowed_roles):
     """Vérifie le rôle avant d'entrer dans la commande."""
+
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -37,5 +38,7 @@ def require_cli_role(*allowed_roles):
                     f"Accès refusé. Rôle(s) autorisé(s) : {', '.join(allowed_roles)}.", fg="red"))
                 return
             return func(*args, **kwargs)
+
         return wrapper
+
     return decorator

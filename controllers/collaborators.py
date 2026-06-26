@@ -34,7 +34,7 @@ def create_collaborator(token, name, email, password, phone, role_id):
 def update_collaborator(token, collaborator_id, name, email, password, phone, role_id):
     collaborator = session.query(Collaborator).filter(Collaborator.id == collaborator_id).first()
     if not collaborator:
-        raise ValueError(f"Collaborateur introuvable.")
+        raise ValueError("Collaborateur introuvable.")
 
     if name:
         collaborator.name = name
@@ -90,7 +90,7 @@ def get_supports():
 
 def get_collaborators(filter_by_role=False):
     if filter_by_role:
-        collaborators = session.query(Collaborator).filter(Collaborator.role_id==int(filter_by_role)).all()
+        collaborators = session.query(Collaborator).filter(Collaborator.role_id == int(filter_by_role)).all()
     else:
         collaborators = session.query(Collaborator).all()
     if not collaborators:
