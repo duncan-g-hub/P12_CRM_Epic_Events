@@ -6,9 +6,10 @@ from dotenv import load_dotenv
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 import logging
+import bcrypt
 
 from database import engine, session
-from models.models import Base, Role
+from models.models import Base, Role, Collaborator
 from commands.auth import login_command, logout_command
 from commands.collaborators import collaborators_group
 from commands.customers import customers_group
@@ -46,6 +47,23 @@ if not session.query(Role).first():
     ])
     session.commit()
 
+# créer un admin si aucun n'existe
+if not session.query(Collaborator).filter(Collaborator.email == "admin@crm.com").first():
+    role = session.query(Role).filter(Role.name == "gestion").first()
+    hashed = bcrypt.hashpw("Admin12345".encode(), bcrypt.gensalt())
+    admin = Collaborator(
+        name="Admin",
+        email="admin@crm.com",
+        password=hashed.decode("utf-8"),
+        phone="0600000000",
+        role_id=role.id
+    )
+    session.add(admin)
+    session.commit()
+    print("Admin créé : "
+          "\nemail = admin@crm.com"
+          "\nmot de passe = Admin12345"
+          "\nPensez à modifier le mot de passe !")
 
 @click.group()
 @click.pass_context
@@ -74,6 +92,8 @@ if __name__ == "__main__":
         pass
     except click.exceptions.Exit:
         pass
+    except click.exceptions.UsageError as e:
+        click.echo(click.style(str(e), fg="yellow"))
     except PermissionError as e:
         click.echo(click.style(str(e), fg="red"))
         if "expiré" in str(e):
