@@ -8,7 +8,7 @@ from database import session
 from models.models import Collaborator, Role
 
 role = session.query(Role).filter(Role.name == "gestion").first()
-hashed = bcrypt.hashpw("Admin1234".encode(), bcrypt.gensalt())
+hashed = bcrypt.hashpw("Admin12345".encode(), bcrypt.gensalt())
 admin = Collaborator(
     name="Admin",
     email="admin@crm.com",
