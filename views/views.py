@@ -5,6 +5,7 @@ def view_display_collaborator(c, c_role):
           f"\n nom : {c.name} (id : {c.id}) "
           f"\n email : {c.email} - téléphone : {c.phone} "
           f"\n role : {c_role}"
+          f"\n date de création : {c.date_creation}"
           "\n----------------------------------\n")
 
 
@@ -17,6 +18,7 @@ def view_display_contract(c):
           f"\n commercial : {c.customer.commercial.name} (id : {c.customer.commercial_id})"
           f"\n client : {c.customer.name} (id : {c.customer_id})"
           f"\n montant total : {c.total_amount}€ - montant à payer : {c.amount_to_pay}€ - signé : {signed}"
+          f"\n date de création : {c.date_creation}"
           "\n----------------------------------\n")
 
 
@@ -28,6 +30,8 @@ def view_display_customer(c):
           f"\n email : {c.email} - téléphone : {c.phone}"
           f"\n entreprise : {c.company_name} "
           f"\n commercial : {c.commercial.name} (id : {c.commercial_id})"
+          f"\n date de création : {c.date_creation}"
+          f"\n date de dernière : {c.date_last_contact}"
           "\n----------------------------------\n")
 
 
