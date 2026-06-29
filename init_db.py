@@ -26,7 +26,7 @@ def init_db():
             role_id=role.id
         ))
         session.commit()
-        print("Admin créé — pensez à changer le mot de passe !")
+        print("Admin créé - pensez à changer le mot de passe !")
 
 if __name__ == "__main__":
     init_db()
