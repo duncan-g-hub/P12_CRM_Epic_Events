@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from models.models import Customer
 from database import session
 from auth.permissions import require_role
@@ -46,19 +48,25 @@ def update_customer(token, customer_id, name, email, phone, company_name):
     customer = session.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:
         raise ValueError("Client introuvable.")
-
+    modified = False
     if customer.commercial_id != collaborator_id:
         raise PermissionError("Vous ne pouvez modifier que les clients dont vous êtes responsable.")
     if name:
         customer.name = name
+        modified = True
     if email:
         validate_email(email)
         customer.email = email
+        modified = True
     if phone:
         validate_phone(phone)
         customer.phone = phone
+        modified = True
     if company_name:
         customer.company_name = company_name
+        modified = True
+    if modified:
+        customer.date_last_contact = datetime.now()
 
     session.commit()
     return customer
