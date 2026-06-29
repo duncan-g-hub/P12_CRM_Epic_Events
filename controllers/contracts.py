@@ -18,13 +18,14 @@ def create_contract(token, customer_id, total_amount, amount_to_pay, signed):
                         amount_to_pay=float(amount_to_pay),
                         signed=signed
                         )
+    session.add(contract)
+    session.commit()
+
     if contract.signed:
         logging.info(
             f"[CONTRAT SIGNÉ] contrat id:{contract.id} - client:{contract.customer.name} - "
             f"[PAR COLLABORATEUR] id:{payload.get('id')}"
         )
-    session.add(contract)
-    session.commit()
     return contract
 
 
