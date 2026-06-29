@@ -4,7 +4,7 @@ import bcrypt
 
 def init_db():
     """Initialize the database: create tables, seed roles, and create default admin if needed."""
-    # Base.metadata.drop_all(engine)   # supprime toutes les tables
+    # Base.metadata.drop_all(engine)   # supprime toutes les tables (à supprimer lors du passage en prod)
     Base.metadata.create_all(engine)  # Créer les tables
 
     if not session.query(Role).first():
