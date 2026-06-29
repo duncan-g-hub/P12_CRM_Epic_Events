@@ -6,16 +6,14 @@ from dotenv import load_dotenv
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 import logging
-import bcrypt
 
-from database import engine, session
-from models.models import Base, Role, Collaborator
 from commands.auth import login_command, logout_command
 from commands.collaborators import collaborators_group
 from commands.customers import customers_group
 from commands.contracts import contracts_group
 from commands.events import events_group
 from token_storage import load_token, delete_token
+from init_db import init_db
 
 load_dotenv()
 
@@ -35,35 +33,8 @@ sentry_sdk.init(
     ]
 )
 
-# Base.metadata.drop_all(engine)   # supprime toutes les tables
-Base.metadata.create_all(engine)  # Créer les tables
+init_db()
 
-# Alimenter les rôles si la table est vide
-if not session.query(Role).first():
-    session.add_all([
-        Role(name="commercial"),
-        Role(name="support"),
-        Role(name="gestion"),
-    ])
-    session.commit()
-
-# créer un admin si aucun n'existe
-if not session.query(Collaborator).filter(Collaborator.email == "admin@crm.com").first():
-    role = session.query(Role).filter(Role.name == "gestion").first()
-    hashed = bcrypt.hashpw("Admin12345".encode(), bcrypt.gensalt())
-    admin = Collaborator(
-        name="Admin",
-        email="admin@crm.com",
-        password=hashed.decode("utf-8"),
-        phone="0600000000",
-        role_id=role.id
-    )
-    session.add(admin)
-    session.commit()
-    print("Admin créé : "
-          "\nemail = admin@crm.com"
-          "\nmot de passe = Admin12345"
-          "\nPensez à modifier le mot de passe !")
 
 @click.group()
 @click.pass_context
