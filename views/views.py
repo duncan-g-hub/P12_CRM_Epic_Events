@@ -31,7 +31,7 @@ def view_display_customer(c):
           f"\n entreprise : {c.company_name} "
           f"\n commercial : {c.commercial.name} (id : {c.commercial_id})"
           f"\n date de création : {c.date_creation}"
-          f"\n date de dernière : {c.date_last_contact}"
+          f"\n date de dernière mise à jour : {c.date_last_contact}"
           "\n----------------------------------\n")
 
 
