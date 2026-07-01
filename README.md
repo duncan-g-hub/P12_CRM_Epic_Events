@@ -51,7 +51,7 @@ views/
 validators.py          # Validation des entrées
 database.py            # Configuration de la base de données
 token_storage.py       # Stockage local du token JWT
-create_admin.py        # Script de création de l'administrateur
+init_db.py             # Script pour l'initialisation de la BDD
 main.py                # Point d'entrée de l'application
 .env                   # Variables d'environnement (non committé)
 ```
@@ -95,11 +95,26 @@ main.py                # Point d'entrée de l'application
    pip install -r requirements.txt
 ```
 
+### Créer la base de données MySQL
+
+Se connecter à MySQL avec un utilisateur root :
+```bash
+mysql -u root -p
+```
+
+Puis créer la base de données et un utilisateur dédié :
+```sql
+CREATE DATABASE epic_events_CRM CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON epic_events_CRM.* TO 'user'@'localhost';
+EXIT;
+```
+
 ### Configurer les variables d'environnement
 
 Créer un fichier `.env` à la racine du projet :
 ```env
-   DB_URL=mysql+mysqlconnector://user:password@localhost/epic_events_CRM
+   DB_URL=mysql+mysqlconnector://'user':'password'@'localhost'/epic_events_CRM
    SECRET_KEY=votre_clé_secrète
    SENTRY_DSN=votre_sentry_dsn
 ```
@@ -112,9 +127,9 @@ Les tables et les rôles sont créés automatiquement au premier lancement :
 
 ### Créer le compte administrateur
 ```bash
-   python create_admin.py
+   python init_db.py
 ```
-Identifiants par défaut : `admin@crm.com` / `Admin1234`
+Identifiants par défaut : `admin@crm.com` / `Admin12345`
 
 ---
 
