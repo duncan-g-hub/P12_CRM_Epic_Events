@@ -69,6 +69,31 @@ def test_create_password_mismatch_then_retry(runner, mocker, gestion_ctx, payloa
     assert result.exit_code == 0
 
 
+
+def test_create_displays_permission_error(runner, mocker, gestion_ctx, payload_gestion):
+    mocker.patch("commands.utils.decode_token", return_value=payload_gestion)
+    mocker.patch(
+        "commands.collaborators.create_collaborator",
+        side_effect=PermissionError("Action non autorisée."),
+    )
+
+    user_input = "\n".join([
+        "Nouveau Collab",  # nom
+        "nouv.collab@crm.com",  # email
+        "Mdp12345!",  # mot de passe
+        "Mdp12345!",  # confirmation
+        "0123456789",  # téléphone
+        "3",  # rôle : gestion
+    ])
+
+    result = runner.invoke(
+        collaborators_group, ["create"],
+        input=user_input, obj=gestion_ctx,
+    )
+    assert result.exit_code == 0
+    assert "Action non autorisée." in result.output
+
+
 # update
 def test_update_success(runner, mocker, gestion_ctx, payload_gestion, fake_gestion, fake_collaborators_list):
     mocker.patch("commands.utils.decode_token", return_value=payload_gestion)
