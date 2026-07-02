@@ -134,7 +134,7 @@ def get_collaborators(filter_by_role=False):
     else:
         collaborators = session.query(Collaborator).all()
     if not collaborators:
-        raise ValueError("Il n'éxiste aucun collaborateurs.")
+        raise ValueError("Collaborateurs introuvables.")
     liste = "\n".join(
         f" nom : {c.name} (id : {c.id})" for c in collaborators)
     valid_ids = [str(c.id) for c in collaborators]
