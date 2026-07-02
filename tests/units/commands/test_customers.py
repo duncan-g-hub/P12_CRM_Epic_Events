@@ -242,7 +242,6 @@ def test_update_denied_for_support(runner, mocker, support_ctx, payload_support)
     mock_update.assert_not_called()
 
 
-
 # display
 def test_display_success(runner, mocker, support_ctx, payload_support, fake_customers_list):
     mocker.patch("commands.utils.decode_token", return_value=payload_support)
