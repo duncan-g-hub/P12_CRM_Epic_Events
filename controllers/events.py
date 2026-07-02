@@ -65,7 +65,7 @@ def update_event(token, event_id, name, contract_id, date_start, date_end, locat
     if contract_id:
         contract = session.query(Contract).filter(Contract.id == contract_id).first()
         if not contract.signed:
-            raise PermissionError("Vous ne pouvez pas créer un évennement sans que le contrat ne soit signé")
+            raise PermissionError("Vous ne pouvez pas attribuer un nouveau contrant sans qu'il ne soit signé")
         event.contract_id = int(contract_id)
     if date_start:
         date_start = validate_future_date(date_start)
