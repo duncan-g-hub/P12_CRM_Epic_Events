@@ -122,7 +122,7 @@ def test_update_success(runner, mocker, gestion_ctx, payload_gestion, fake_gesti
     )
 
     assert result.exit_code == 0
-    assert "mis à jour" in result.output
+    assert "Collaborateur 'gestion' mis à jour" in result.output
     mock_update.assert_called_once()
 
 
@@ -195,6 +195,7 @@ def test_display_success(runner, mocker, commercial_ctx, payload_commercial, fak
     )
 
     assert result.exit_code == 0
+    assert "Affichage des détails d'un collaborateur" in result.output
     mock_display.assert_called_once_with(commercial_ctx["token"], "1")
 
 
@@ -215,7 +216,7 @@ def test_display_with_role_filter(runner, mocker, gestion_ctx, payload_gestion, 
         collaborators_group, ["display"],
         input=user_input, obj=gestion_ctx,
     )
-
+    assert "Affichage des détails d'un collaborateur" in result.output
     assert result.exit_code == 0
     mock_get.assert_called_once_with("1")
 
