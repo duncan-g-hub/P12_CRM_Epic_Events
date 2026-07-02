@@ -56,7 +56,6 @@ def test_login_prompts_hide_password(runner, mocker, fake_commercial):
     assert "Mdp12345" not in result.output
 
 
-
 # logout_command
 def test_logout_deletes_token(runner, mocker):
     mock_delete = mocker.patch("commands.auth.delete_token")

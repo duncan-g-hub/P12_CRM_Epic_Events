@@ -11,7 +11,6 @@ def runner():
     return CliRunner()
 
 
-
 # Contextes / tokens par rôle
 @pytest.fixture
 def fake_token():
@@ -42,14 +41,15 @@ def no_auth_ctx():
 def payload_commercial():
     return {"id": 1, "role": "commercial"}
 
+
 @pytest.fixture
 def payload_gestion():
     return {"id": 2, "role": "gestion"}
 
+
 @pytest.fixture
 def payload_support():
     return {"id": 3, "role": "support"}
-
 
 
 # Objets fake
@@ -67,6 +67,7 @@ def fake_commercial():
     collaborator.role = role
     return collaborator
 
+
 @pytest.fixture
 def fake_gestion():
     role = Role(id=2, name="gestion")
@@ -82,6 +83,7 @@ def fake_gestion():
     collaborator.role = role
     return collaborator
 
+
 @pytest.fixture
 def fake_support():
     role = Role(id=3, name="support")
@@ -95,7 +97,6 @@ def fake_support():
     )
     collaborator.role = role
     return collaborator
-
 
 
 @pytest.fixture
@@ -144,14 +145,13 @@ def fake_event(fake_contract):
     return event
 
 
-
 # Listes formatées
 @pytest.fixture
 def fake_collaborators_list():
     return (("\n nom : commercial (id : 1)"
-            "\n nom : gestion (id : 2)"
-            "\n nom : support (id : 3)"),
-            ["1","2","3"])
+             "\n nom : gestion (id : 2)"
+             "\n nom : support (id : 3)"),
+            ["1", "2", "3"])
 
 
 @pytest.fixture
