@@ -107,4 +107,6 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
 def get_contract(contract_id):
     """Return a single contract by id."""
     contract = session.query(Contract).filter(Contract.id == contract_id).first()
+    if not contract:
+        raise ValueError("Contract introuvable.")
     return contract

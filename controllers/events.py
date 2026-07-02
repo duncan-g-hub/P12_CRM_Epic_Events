@@ -121,7 +121,7 @@ def get_events(support_id=None, filter_by_support=False, filter_by_empty_support
 
     events = query.all()
     if not events:
-        raise ValueError("Événnements introuvables.")
+        raise ValueError("Événements introuvables.")
     liste = "\n\n".join(
         f" nom : {e.name} (id : {e.id}) "
         f"\n date de départ : {e.date_start} - date de fin : {e.date_end} "
@@ -133,4 +133,6 @@ def get_events(support_id=None, filter_by_support=False, filter_by_empty_support
 def get_event(event_id):
     """Return a single event by id."""
     event = session.query(Event).filter(Event.id == event_id).first()
+    if not event:
+        raise ValueError("Événement introuvable.")
     return event
