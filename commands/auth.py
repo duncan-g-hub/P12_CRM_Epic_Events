@@ -27,7 +27,7 @@ def login_command(ctx):
             fg="green"
         ))
     except ValueError as e:
-        click.echo(click.style(f"✗ {e}", fg="red"))
+        click.echo(click.style(f"{e}", fg="red"))
         raise click.Abort()
 
 
