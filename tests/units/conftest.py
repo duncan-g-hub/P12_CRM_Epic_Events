@@ -11,10 +11,8 @@ def runner():
     return CliRunner()
 
 
-# ---------------------------------------------------------------------------
-# Contextes / tokens par rôle
-# ---------------------------------------------------------------------------
 
+# Contextes / tokens par rôle
 @pytest.fixture
 def fake_token():
     return "fake-jwt-token"
@@ -53,11 +51,8 @@ def payload_support():
     return {"id": 3, "role": "support"}
 
 
-# ---------------------------------------------------------------------------
-# Objets métier factices (utilisés comme valeurs de retour des controllers)
-# ---------------------------------------------------------------------------
 
-
+# Objets fake
 @pytest.fixture
 def fake_commercial():
     role = Role(id=1, name="commercial")
@@ -149,10 +144,8 @@ def fake_event(fake_contract):
     return event
 
 
-# ---------------------------------------------------------------------------
-# Listes formatées (get_xxx() renvoie généralement (str_affichage, ids))
-# ---------------------------------------------------------------------------
 
+# Listes formatées
 @pytest.fixture
 def fake_collaborators_list():
     return (("\n nom : commercial (id : 1)"
