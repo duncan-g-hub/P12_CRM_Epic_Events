@@ -218,3 +218,23 @@ def test_display_with_role_filter(runner, mocker, gestion_ctx, payload_gestion, 
 
     assert result.exit_code == 0
     mock_get.assert_called_once_with("1")
+
+
+def test_display_no_collaborators_available(runner, mocker, gestion_ctx, payload_gestion):
+    mocker.patch("commands.utils.decode_token", return_value=payload_gestion)
+    mocker.patch(
+        "commands.collaborators.get_collaborators",
+        side_effect=ValueError("Collaborateurs introuvables."),
+    )
+
+    user_input = "\n".join([
+        "",  # filtre : commercial
+        "",  # id du collaborateur
+    ])
+
+    result = runner.invoke(
+        collaborators_group, ["display"],
+        input=user_input, obj=gestion_ctx,
+    )
+    assert result.exit_code == 0
+    assert "Collaborateurs introuvables." in result.output
