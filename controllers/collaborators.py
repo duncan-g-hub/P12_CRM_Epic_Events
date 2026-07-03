@@ -3,7 +3,7 @@ import logging
 
 from auth.auth import decode_token
 from models.models import Collaborator, Role
-from database import get_session
+import database
 from auth.permissions import require_role
 from views.views import view_display_collaborator
 from validators import validate_email, validate_password, validate_phone
@@ -16,7 +16,7 @@ def create_collaborator(token, name, email, password, phone, role_id):
     Raises:
             ValueError: If email already in use.
     """
-    session = get_session()
+    session = database.get_session()
     validate_email(email)
     validate_password(password)
     validate_phone(phone)
@@ -51,7 +51,7 @@ def update_collaborator(token, collaborator_id, name, email, password, phone, ro
     Raises:
         ValueError: If collaborator not found or email already in use.
     """
-    session = get_session()
+    session = database.get_session()
     payload = decode_token(token)
     collaborator = session.query(Collaborator).filter(Collaborator.id == collaborator_id).first()
     if not collaborator:
@@ -91,7 +91,7 @@ def update_collaborator(token, collaborator_id, name, email, password, phone, ro
 @require_role("gestion", "commercial", "support")
 def display_collaborator(token, collaborator_id):
     """Display collaborator details."""
-    session = get_session()
+    session = database.get_session()
     collaborator = session.get(Collaborator, collaborator_id)
     view_display_collaborator(collaborator, collaborator.role.name)
 
@@ -102,7 +102,7 @@ def get_commercials():
     Raises:
         ValueError: If no commercials found.
     """
-    session = get_session()
+    session = database.get_session()
     commercials = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "commercial").all()
     if not commercials:
         raise ValueError("Il n'éxiste aucun commercial.")
@@ -118,7 +118,7 @@ def get_supports():
     Raises:
         ValueError: If no supports found.
     """
-    session = get_session()
+    session = database.get_session()
     supports = session.query(Collaborator).join(Collaborator.role).filter(Role.name == "support").all()
     if not supports:
         raise ValueError("Il n'éxiste aucun support.")
@@ -134,7 +134,7 @@ def get_collaborators(filter_by_role=False):
     Raises:
         ValueError: If no collaborators found.
     """
-    session = get_session()
+    session = database.get_session()
     if filter_by_role:
         collaborators = session.query(Collaborator).filter(Collaborator.role_id == int(filter_by_role)).all()
     else:

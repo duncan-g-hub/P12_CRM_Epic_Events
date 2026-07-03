@@ -1,12 +1,12 @@
-from database import engine, get_session
+import database
 from models.models import Base, Role, Collaborator
 import bcrypt
 
 def init_db():
     """Initialize the database: create tables, seed roles, and create default admin if needed."""
-    session = get_session()
-    # Base.metadata.drop_all(engine)   # supprime toutes les tables (à supprimer lors du passage en prod)
-    Base.metadata.create_all(engine)  # Créer les tables
+    session = database.get_session()
+    # Base.metadata.drop_all(database.engine)   # supprime toutes les tables (à supprimer lors du passage en prod)
+    Base.metadata.create_all(database.engine)  # Créer les tables
 
     if not session.query(Role).first():
         session.add_all([
