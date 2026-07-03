@@ -62,7 +62,6 @@ def test_create_collaborator_permission_error(tokens, roles):
         )
 
 
-
 # update
 def test_update_collaborator(db_session, tokens, roles):
     token = tokens["gestion"]
@@ -104,7 +103,6 @@ def test_update_collaborator_not_found(tokens):
         )
 
 
-
 # display
 def test_display_collaborator(db_session, tokens, capsys, roles):
     token = tokens["gestion"]
@@ -122,7 +120,6 @@ def test_display_collaborator(db_session, tokens, capsys, roles):
 
     captured = capsys.readouterr()
     assert "test collaborator" in captured.out
-
 
 
 # get
