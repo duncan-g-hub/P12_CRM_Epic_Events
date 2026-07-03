@@ -9,5 +9,12 @@ load_dotenv()
 
 engine = create_engine(os.getenv("DB_URL"), echo=False)
 
-Session = sessionmaker(bind=engine)
-session = Session()
+SessionLocal = sessionmaker(
+    bind=engine,
+    autoflush=False,
+    autocommit=False,
+)
+
+def get_session():
+    return SessionLocal()
+

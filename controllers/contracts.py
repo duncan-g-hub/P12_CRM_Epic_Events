@@ -1,7 +1,7 @@
 import logging
 
 from models.models import Contract, Customer
-from database import session
+from database import get_session
 from views.views import view_display_contract
 from auth.permissions import require_role
 from auth.auth import decode_token
@@ -11,6 +11,7 @@ from validators import validate_amount_to_pay
 @require_role("gestion")
 def create_contract(token, customer_id, total_amount, amount_to_pay, signed):
     """Create and save a new contract to the database (gestion only)."""
+    session = get_session()
     payload = decode_token(token)
     validate_amount_to_pay(amount_to_pay, total_amount)
     contract = Contract(customer_id=int(customer_id),
@@ -37,6 +38,7 @@ def update_contract(token, contract_id, customer_id, total_amount, amount_to_pay
         ValueError: If contract not found or trying to unsign a signed contract.
         PermissionError: If commercial tries to update another commercial's client contract.
     """
+    session = get_session()
     payload = decode_token(token)
     collaborator_role = payload.get("role")
     collaborator_id = payload.get("id")
@@ -75,6 +77,7 @@ def update_contract(token, contract_id, customer_id, total_amount, amount_to_pay
 @require_role("gestion", "commercial", "support")
 def display_contract(token, contract_id):
     """Display contract details."""
+    session = get_session()
     contract = session.get(Contract, contract_id)
     view_display_contract(contract)
 
@@ -86,6 +89,7 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
     Raises:
         ValueError: If no contracts found.
     """
+    session = get_session()
     query = session.query(Contract)
     if filter_by_commercial and commercial_id:
         query = query.join(Contract.customer).filter(Customer.commercial_id == commercial_id)
@@ -106,6 +110,7 @@ def get_contracts(commercial_id=None, filter_by_commercial=False, filter_by_amou
 
 def get_contract(contract_id):
     """Return a single contract by id."""
+    session = get_session()
     contract = session.query(Contract).filter(Contract.id == contract_id).first()
     if not contract:
         raise ValueError("Contract introuvable.")

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from models.models import Customer
-from database import session
+from database import get_session
 from auth.permissions import require_role
 from views.views import view_display_customer
 from auth.auth import decode_token
@@ -15,6 +15,7 @@ def create_customer(token, name, email, phone, company_name, commercial_id):
     Raises:
         ValueError: If email already in use.
     """
+    session = get_session()
     validate_email(email)
     validate_phone(phone)
     existing = session.query(Customer).filter(Customer.email == email).first()
@@ -41,7 +42,7 @@ def update_customer(token, customer_id, name, email, phone, company_name):
         ValueError: If customer not found.
         PermissionError: If commercial tries to update another commercial's customer.
     """
-
+    session = get_session()
     payload = decode_token(token)
     collaborator_id = payload.get("id")
 
@@ -79,6 +80,7 @@ def update_customer_commercial(token, customer_id, commercial_id):
     Raises:
         ValueError: If customer not found.
     """
+    session = get_session()
     customer = session.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:
         raise ValueError("Client introuvable.")
@@ -93,6 +95,7 @@ def update_customer_commercial(token, customer_id, commercial_id):
 @require_role("gestion", "commercial", "support")
 def display_customer(token, customer_id):
     """Display customer details."""
+    session = get_session()
     customer = session.get(Customer, customer_id)
     view_display_customer(customer)
 
@@ -103,6 +106,7 @@ def get_customers():
     Raises:
         ValueError: If no customers found.
     """
+    session = get_session()
     customers = session.query(Customer).all()
     if not customers:
         raise ValueError("Clients introuvables.")
