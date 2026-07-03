@@ -6,6 +6,7 @@ from controllers.contracts import (
     get_contracts,
 )
 
+
 # create
 def test_create_contract(db_session, gestion_token, customer):
     contract = create_contract(
@@ -29,6 +30,7 @@ def test_create_contract_invalid_amount(db_session, gestion_token, customer):
             amount_to_pay=2000,
             signed=False
         )
+
 
 # update
 def test_update_contract(db_session, gestion_token, signed_contract):
@@ -55,12 +57,14 @@ def test_unsign_signed_contract(db_session, gestion_token, signed_contract):
             signed=False
         )
 
+
 # display
 def test_display_contract(db_session, gestion_token, signed_contract, capsys):
     display_contract(gestion_token, signed_contract.id)
 
     out = capsys.readouterr().out
     assert str(signed_contract.id) in out or "client" in out
+
 
 # get
 def test_get_contracts(db_session, signed_contract):
