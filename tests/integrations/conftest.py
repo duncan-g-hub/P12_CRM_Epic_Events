@@ -20,9 +20,6 @@ from models.models import (
 
 from auth.auth import login
 
-# =========================================================
-# ENV
-# =========================================================
 
 load_dotenv()
 DATABASE_URL = os.getenv("TEST_DB_URL")
