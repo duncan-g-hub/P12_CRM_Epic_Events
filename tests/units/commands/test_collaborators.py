@@ -74,10 +74,10 @@ def test_update_denied_for_wrong_role(runner, mocker, commercial_ctx, payload_co
 
 def test_update_no_collaborators_available(runner, mocker, gestion_ctx, payload_gestion):
     mocker.patch("commands.utils.decode_token", return_value=payload_gestion)
-    mocker.patch("commands.collaborators.get_collaborators", side_effect=ValueError("Aucun collaborateur disponible."))
+    mocker.patch("commands.collaborators.get_collaborators", side_effect=ValueError("Collaborateurs introuvables."))
     result = runner.invoke(collaborators_group, ["update"], input="", obj=gestion_ctx)
     assert result.exit_code == 0
-    assert "Aucun collaborateur disponible." in result.output
+    assert "Collaborateurs introuvables." in result.output
 
 
 def test_update_displays_permission_error(runner, mocker, gestion_ctx, payload_gestion,
@@ -120,7 +120,7 @@ def test_display_with_role_filter(runner, mocker, gestion_ctx, payload_gestion, 
     mock_get.assert_called_once_with("1")
 
 
-def test_display_no_collaborators_available(runner, mocker, gestion_ctx, payload_gestion):
+def test_display_no_collaborator_available(runner, mocker, gestion_ctx, payload_gestion):
     mocker.patch("commands.utils.decode_token", return_value=payload_gestion)
     mocker.patch("commands.collaborators.get_collaborators", side_effect=ValueError("Collaborateurs introuvables."))
 
