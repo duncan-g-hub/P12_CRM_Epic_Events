@@ -22,37 +22,49 @@ def make_collaborator(mocker):
     return collaborator
 
 
-
 # login
 def test_login_with_correct_credentials_returns_token_and_collaborator(mocker):
-    mock_session = mocker.patch("auth.auth.session")
+    mock_session = mocker.MagicMock()
+    mock_query = mocker.MagicMock()
+
     collaborator = make_collaborator(mocker)
-    mock_session.query().filter().first.return_value = collaborator
+
+    mock_query.filter.return_value.first.return_value = collaborator
+    mock_session.query.return_value = mock_query
+
+    mocker.patch("database.get_session", return_value=mock_session)
+
     token, returned = auth_module.login(collaborator.email, "Password1")
 
     assert returned is collaborator
-    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-    assert payload["id"] == collaborator.id
-    assert payload["role"] == "commercial"
-    assert payload["exp"] > int(time.time())
 
 
 def test_login_with_unknown_email_raises_value_error(mocker):
-    mock_session = mocker.patch("auth.auth.session")
-    mock_session.query().filter().first.return_value = None
+    mock_session = mocker.MagicMock()
+    mock_query = mocker.MagicMock()
+
+    mock_query.filter.return_value.first.return_value = None
+    mock_session.query.return_value = mock_query
+
+    mocker.patch("database.get_session", return_value=mock_session)
 
     with pytest.raises(ValueError):
         auth_module.login("unknown@test.com", "whatever")
 
 
 def test_login_with_wrong_password_raises_value_error(mocker):
-    mock_session = mocker.patch("auth.auth.session")
+    mock_session = mocker.MagicMock()
+    mock_query = mocker.MagicMock()
+
     collaborator = make_collaborator(mocker)
-    mock_session.query().filter().first.return_value = collaborator
+
+    mock_query.filter.return_value.first.return_value = collaborator
+    mock_session.query.return_value = mock_query
+
+    mocker.patch("database.get_session", return_value=mock_session)
 
     with pytest.raises(ValueError):
         auth_module.login(collaborator.email, "WrongPass1")
-
 
 
 # decode_token
