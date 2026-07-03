@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 
 from models.models import Collaborator
-from database import session
+from database import get_session
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -20,6 +20,7 @@ def login(email, password):
     Raises:
         ValueError: If email not found or password is incorrect.
     """
+    session = get_session()
     collaborator = session.query(Collaborator).filter(Collaborator.email == email).first()
 
     if not collaborator:
