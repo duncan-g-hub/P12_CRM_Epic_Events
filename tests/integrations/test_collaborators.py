@@ -104,10 +104,8 @@ def test_update_collaborator_not_found(tokens):
         )
 
 
-# =========================================================
-# DISPLAY
-# =========================================================
 
+# display
 def test_display_collaborator(db_session, tokens, capsys, roles):
     token = tokens["gestion"]
 
@@ -126,10 +124,8 @@ def test_display_collaborator(db_session, tokens, capsys, roles):
     assert "test collaborator" in captured.out
 
 
-# =========================================================
-# GET LIST
-# =========================================================
 
+# get
 def test_get_collaborators(db_session, tokens, roles):
     token = tokens["gestion"]
 
