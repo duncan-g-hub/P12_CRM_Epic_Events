@@ -101,7 +101,7 @@ def test_update_as_gestion_no_commercials_available(runner, mocker, gestion_ctx,
     mocker.patch("commands.customers.get_customers", return_value=fake_customers_list)
     mocker.patch("commands.customers.get_commercials", side_effect=ValueError("Il n'éxiste aucun commercial."))
 
-    result = runner.invoke(customers_group, ["update"], input="", obj=gestion_ctx)
+    result = runner.invoke(customers_group, ["update"], input="1\n", obj=gestion_ctx)
 
     assert result.exit_code == 0
     assert "Il n'éxiste aucun commercial." in result.output
