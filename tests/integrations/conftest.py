@@ -1,6 +1,7 @@
 import os
 import bcrypt
 import pytest
+
 from datetime import datetime, timedelta
 
 from sqlalchemy import create_engine
@@ -19,8 +20,11 @@ from models.models import (
 
 from auth.auth import login
 
-load_dotenv()
+# =========================================================
+# ENV
+# =========================================================
 
+load_dotenv()
 DATABASE_URL = os.getenv("TEST_DB_URL")
 
 engine = create_engine(DATABASE_URL)
@@ -29,6 +33,7 @@ TestingSessionLocal = sessionmaker(
     bind=engine,
     autoflush=False,
     autocommit=False,
+    expire_on_commit=False,
 )
 
 
@@ -36,44 +41,48 @@ TestingSessionLocal = sessionmaker(
 def db_engine():
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
-
     yield engine
-
     Base.metadata.drop_all(engine)
 
 
 @pytest.fixture()
 def db_session(db_engine):
+    connection = db_engine.connect()
+    transaction = connection.begin()
 
-    session = TestingSessionLocal()
+    session = TestingSessionLocal(bind=connection)
 
     yield session
 
-    session.rollback()
+    session.expunge_all()
     session.close()
 
-
-@pytest.fixture(autouse=True)
-def override_session(monkeypatch, db_session):
-
-    monkeypatch.setattr("database.get_session",lambda: db_session)
-
-    yield
+    transaction.rollback()
+    connection.close()
 
 
 @pytest.fixture(autouse=True)
-def force_session(monkeypatch, db_session):
+def override_get_session(monkeypatch, db_session):
     import database
-    import auth.auth
-    import controllers
 
     monkeypatch.setattr(database, "get_session", lambda: db_session)
-    monkeypatch.setattr(auth.auth, "get_session", lambda: db_session)
+
+    import sys
+    sys.modules["database"].get_session = lambda: db_session
+
+
+@pytest.fixture(autouse=True)
+def clean_db(db_session):
+    yield
+
+    for table in reversed(Base.metadata.sorted_tables):
+        db_session.execute(table.delete())
+
+    db_session.commit()
 
 
 @pytest.fixture()
 def roles(db_session):
-
     commercial = Role(name="commercial")
     support = Role(name="support")
     gestion = Role(name="gestion")
@@ -90,87 +99,64 @@ def roles(db_session):
 
 @pytest.fixture()
 def gestion(db_session, roles):
-
-    collaborator = Collaborator(
+    obj = Collaborator(
         name="gestion",
         email="gestion@crm.com",
-        password=bcrypt.hashpw(b"Mdp12345",bcrypt.gensalt()).decode(),
+        password=bcrypt.hashpw(b"Mdp12345", bcrypt.gensalt()).decode(),
         phone="0123456789",
         role_id=roles["gestion"].id,
     )
-
-    db_session.add(collaborator)
+    db_session.add(obj)
     db_session.commit()
-
-    return collaborator
+    db_session.refresh(obj)
+    return obj
 
 
 @pytest.fixture()
 def commercial(db_session, roles):
-
-    collaborator = Collaborator(
+    obj = Collaborator(
         name="commercial",
         email="commercial@crm.com",
-        password=bcrypt.hashpw(b"Mdp12345",bcrypt.gensalt()).decode(),
+        password=bcrypt.hashpw(b"Mdp12345", bcrypt.gensalt()).decode(),
         phone="0123456789",
         role_id=roles["commercial"].id,
     )
-
-    db_session.add(collaborator)
+    db_session.add(obj)
     db_session.commit()
-
-    return collaborator
-
+    db_session.refresh(obj)
+    return obj
 
 
 @pytest.fixture()
 def support(db_session, roles):
-
-    collaborator = Collaborator(
+    obj = Collaborator(
         name="support",
         email="support@crm.com",
-        password=bcrypt.hashpw(b"Mdp12345",bcrypt.gensalt()).decode(),
+        password=bcrypt.hashpw(b"Mdp12345", bcrypt.gensalt()).decode(),
         phone="0123456789",
         role_id=roles["support"].id,
     )
-
-    db_session.add(collaborator)
+    db_session.add(obj)
     db_session.commit()
-
-    return collaborator
-
+    db_session.refresh(obj)
+    return obj
 
 
 @pytest.fixture()
 def gestion_token(gestion):
-
-    token, _ = login(
-        "gestion@crm.com",
-        "Mdp12345"
-    )
-
+    token, _ = login("gestion@crm.com", "Mdp12345")
     return token
 
 
 @pytest.fixture()
 def commercial_token(commercial):
-
-    token, _ = login(
-        "commercial@crm.com",
-        "Mdp12345"
-    )
-
+    token, _ = login("commercial@crm.com", "Mdp12345")
     return token
 
 
 @pytest.fixture()
 def support_token(support):
-
-    token, _ = login(
-        "support@crm.com",
-        "Mdp12345"
-    )
-
+    token, _ = login("support@crm.com", "Mdp12345")
     return token
 
 
@@ -185,60 +171,50 @@ def tokens(gestion_token, commercial_token, support_token):
 
 @pytest.fixture()
 def customer(db_session, commercial):
-
-    customer = Customer(
+    obj = Customer(
         name="client",
         email="client@crm.com",
         phone="0123456789",
         company_name="Entreprise",
         commercial_id=commercial.id,
     )
-
-    db_session.add(customer)
+    db_session.add(obj)
     db_session.commit()
-
-    return customer
+    db_session.refresh(obj)
+    return obj
 
 
 @pytest.fixture()
 def signed_contract(db_session, customer):
-
-    contract = Contract(
+    obj = Contract(
         customer_id=customer.id,
         total_amount=1000,
         amount_to_pay=300,
         signed=True,
     )
-
-    db_session.add(contract)
+    db_session.add(obj)
     db_session.commit()
-
-    return contract
+    db_session.refresh(obj)
+    return obj
 
 
 @pytest.fixture()
 def unsigned_contract(db_session, customer):
-
-    contract = Contract(
+    obj = Contract(
         customer_id=customer.id,
         total_amount=1000,
         amount_to_pay=300,
         signed=False,
     )
-
-    db_session.add(contract)
+    db_session.add(obj)
     db_session.commit()
-
-    return contract
-
-
-
+    db_session.refresh(obj)
+    return obj
 
 
 @pytest.fixture()
 def event(db_session, signed_contract, support):
-
-    event = Event(
+    obj = Event(
         name="Evénement",
         contract_id=signed_contract.id,
         support_id=support.id,
@@ -248,8 +224,7 @@ def event(db_session, signed_contract, support):
         attendees=50,
         notes="RAS",
     )
-
-    db_session.add(event)
+    db_session.add(obj)
     db_session.commit()
-
-    return event
+    db_session.refresh(obj)
+    return obj
