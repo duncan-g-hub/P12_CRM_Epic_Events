@@ -7,93 +7,86 @@ from controllers.collaborators import (
     get_collaborators
 )
 
-from models.models import Collaborator
 
-
-# =========================================================
-# CREATE
-# =========================================================
-
-def test_create_collaborator(db_session, tokens):
+# create
+def test_create_collaborator(db_session, tokens, roles):
     token = tokens["gestion"]
 
     collaborator = create_collaborator(
         token=token,
-        name="John Doe",
-        email="john@test.com",
-        password="PasswordA1",
-        phone="0612345678",
-        role_id=1
+        name="test collaborator",
+        email="collaborator@test.com",
+        password="Mdp12345",
+        phone="0123456789",
+        role_id=roles["commercial"].id
     )
 
     assert collaborator.id is not None
-    assert collaborator.email == "john@test.com"
+    assert collaborator.email == "collaborator@test.com"
 
 
-def test_create_collaborator_duplicate_email(db_session, tokens):
+def test_create_collaborator_duplicate_email(db_session, tokens, roles):
     token = tokens["gestion"]
 
     create_collaborator(
         token=token,
-        name="John Doe",
-        email="dup@test.com",
-        password="PasswordA1",
-        phone="0612345678",
-        role_id=1
+        name="test collaborator",
+        email="collaborator@test.com",
+        password="Mdp12345",
+        phone="0123456789",
+        role_id=roles["commercial"].id
     )
 
     with pytest.raises(ValueError, match="déjà utilisé"):
         create_collaborator(
             token=token,
-            name="Jane",
-            email="dup@test.com",
-            password="PasswordA1",
-            phone="0612345678",
-            role_id=1
+            name="test collaborator",
+            email="collaborator@test.com",
+            password="Mdp12345",
+            phone="0123456789",
+            role_id=roles["commercial"].id
         )
 
 
-def test_create_collaborator_permission_error(tokens):
+def test_create_collaborator_permission_error(tokens, roles):
     token = tokens["support"]
 
     with pytest.raises(PermissionError):
         create_collaborator(
             token=token,
-            name="Hack",
-            email="hack@test.com",
-            password="PasswordA1",
-            phone="0612345678",
-            role_id=1
+            name="test collaborator",
+            email="collaborator@test.com",
+            password="Mdp12345",
+            phone="0123456789",
+            role_id=roles["commercial"].id
         )
 
 
-# =========================================================
-# UPDATE
-# =========================================================
 
-def test_update_collaborator(db_session, tokens):
+# update
+def test_update_collaborator(db_session, tokens, roles):
     token = tokens["gestion"]
 
     collab = create_collaborator(
         token=token,
-        name="Old Name",
-        email="old@test.com",
-        password="PasswordA1",
-        phone="0612345678",
-        role_id=1
+        name="test collaborator",
+        email="collaborator@test.com",
+        password="Mdp12345",
+        phone="0123456789",
+        role_id=roles["commercial"].id
     )
 
     updated = update_collaborator(
         token=token,
         collaborator_id=collab.id,
-        name="New Name",
+        name="test collaborator new",
         email=None,
         password=None,
         phone=None,
         role_id=None
     )
 
-    assert updated.name == "New Name"
+    assert updated.name == "test collaborator new"
 
 
 def test_update_collaborator_not_found(tokens):
@@ -115,41 +108,41 @@ def test_update_collaborator_not_found(tokens):
 # DISPLAY
 # =========================================================
 
-def test_display_collaborator(db_session, tokens, capsys):
+def test_display_collaborator(db_session, tokens, capsys, roles):
     token = tokens["gestion"]
 
     collab = create_collaborator(
         token=token,
-        name="Display Test",
-        email="display@test.com",
-        password="PasswordA1",
-        phone="0612345678",
-        role_id=1
+        name="test collaborator",
+        email="collaborator@test.com",
+        password="Mdp12345",
+        phone="0123456789",
+        role_id=roles["commercial"].id
     )
 
     display_collaborator(token, collab.id)
 
     captured = capsys.readouterr()
-    assert "Display Test" in captured.out
+    assert "test collaborator" in captured.out
 
 
 # =========================================================
 # GET LIST
 # =========================================================
 
-def test_get_collaborators(db_session, tokens):
+def test_get_collaborators(db_session, tokens, roles):
     token = tokens["gestion"]
 
     create_collaborator(
         token=token,
-        name="List Test",
-        email="list@test.com",
-        password="PasswordA1",
-        phone="0612345678",
-        role_id=1
+        name="test collaborator",
+        email="collaborator@test.com",
+        password="Mdp12345",
+        phone="0123456789",
+        role_id=roles["commercial"].id
     )
 
     result, ids = get_collaborators()
 
-    assert "List Test" in result
+    assert "test collaborator" in result
     assert len(ids) > 0
